@@ -12,10 +12,18 @@ def buttonSelect(i,j):
     if (prevX != -1):
         textbox[prevY][prevX].config(highlightbackground="black")
     prevX,prevY = i,j
-    textbox[j][i].config(highlightbackground="white")
+    textbox[j][i].focus_set()
+    textbox[j][i].config(highlightcolor="white")
+    textbox[j][i].bind("1",keyOne)
+    textbox[j][i].bind("2",keyTwo)
 
-def key(event):
-    print("pressed")
+
+def keyOne(event):
+    global prevX,prevY
+    textbox[prevY][prevX].config(bg="green",activebackground="green")
+def keyTwo(event):
+    global prevX,prevY
+    textbox[prevY][prevX].config(bg="blue",activebackground="blue")
 
 #15x15 Textbox
 textbox = list(list())
@@ -24,7 +32,6 @@ for j in range(15):
     for i in range(15):
         textbox[j].append(Button(root,width=1,height=1,bg="green",highlightbackground="black",
 borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
-        textbox[j][-1].bind("<Key>",key)
         textbox[j][-1].grid(row=j,column=i)
 
 
