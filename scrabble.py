@@ -77,6 +77,14 @@ def boardSetup(num,x,y,char):
     else:
         textbox[prevY][prevX].letter = ''
 
+#Letter Board
+def displayCurrentLetters():
+    givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
+    givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
+    for i in range(len(currentLetters)):
+        givenLetters.insert("insert", currentLetters[i],"", "1", "subscript")
+    givenLetters.configure(state="disabled")
+    givenLetters.grid(row = 16,column=0,columnspan=15)
 
 #Saving the game data to GameData.py when closing the program.
 def windowClose():
@@ -88,8 +96,9 @@ def windowClose():
                 boardColor.append(textbox[i][j].color)
                 boardLetter.append(textbox[i][j].letter)
                 f = open("GameData.py","w")
-                f.write("boardColor = "+str(boardColor)+"\n")
-                f.write("boardLetter = "+str(boardLetter)+"\n")
+        f.write("boardColor = "+str(boardColor)+"\n")
+        f.write("boardLetter = "+str(boardLetter)+"\n")
+        f.write("currentLetters = "+str(currentLetters)+"\n")
         root.destroy()
 
 #15x15 Board Frontend
@@ -108,12 +117,9 @@ ScorePlayer1.grid(row = 0,column=16)
 ScorePlayer2 = Label(root,text="Player 2: 0",width=15,font=("Courier",11))
 ScorePlayer2.grid(row = 1,column=16)
 
-#Letter Board
-givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
-givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
-givenLetters.insert("insert", "A", "", "1", "subscript", "B","", "1", "subscript", "C", "", "1", "subscript", "D", "", "1", "subscript", "E","", "1", "subscript", "F", "", "1", "subscript","G", "", "1", "subscript")
-givenLetters.configure(state="disabled")
-givenLetters.grid(row = 16,column=0,columnspan=15)
+#Letter board
+displayCurrentLetters()
+
 
 
 
