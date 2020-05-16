@@ -9,6 +9,7 @@ root.title("JP Scrabble")
 root.resizable(False,False)
 
 prevX,prevY = -1,-1
+letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
 
 #Function that runs when a textbox(button) is selected.
 def buttonSelect(i,j):
@@ -24,8 +25,15 @@ def buttonSelect(i,j):
 
 #Function when key is pressed after the button is selected.
 def keyChar(event):
-    global prevY,prevX
-    if(event.char.isalpha()):
+    global prevY,prevX,usedLetters
+    if(event.char.isalpha() and event.char.upper() in currentLetters):
+        currentLetters.remove(event.char.upper())
+        usedLetters.append(event.char.upper())
+        if(textbox[prevY][prevX].letter is not ''):
+            currentLetters.append(textbox[prevY][prevX].letter)
+            usedLetters.remove(textbox[prevY][prevX].letter)
+            boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
+        displayCurrentLetters()
         boardSetup(-1,prevX,prevY,event.char)
         if(prevX < 14):
             buttonSelect(prevX+1,prevY)
@@ -38,7 +46,11 @@ def keyChar(event):
     if(event.keysym=="Right" and prevX != 14):
         buttonSelect(prevX+1,prevY)
     if(event.keysym=="BackSpace"):
-        boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
+        if(textbox[prevY][prevX].letter is not ''):
+            currentLetters.append(textbox[prevY][prevX].letter)
+            usedLetters.remove(textbox[prevY][prevX].letter)
+            displayCurrentLetters()
+            boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
         if(prevX!=0):
             buttonSelect(prevX-1,prevY)
     if(event.char is '1'):
@@ -82,7 +94,7 @@ def displayCurrentLetters():
     givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
     givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
     for i in range(len(currentLetters)):
-        givenLetters.insert("insert", currentLetters[i],"", "1", "subscript")
+        givenLetters.insert("insert", currentLetters[i],"", letterScores[ord(currentLetters[i])-65], "subscript")
     givenLetters.configure(state="disabled")
     givenLetters.grid(row = 16,column=0,columnspan=15)
 
@@ -99,6 +111,9 @@ def windowClose():
         f.write("boardColor = "+str(boardColor)+"\n")
         f.write("boardLetter = "+str(boardLetter)+"\n")
         f.write("currentLetters = "+str(currentLetters)+"\n")
+        f.write("usedLetters = "+str(usedLetters)+"\n")
+        f.write("ScorePlayer1 = "+str(ScorePlayer1)+"\n")
+        f.write("ScorePlayer2 = "+str(ScorePlayer2)+"\n")
         root.destroy()
 
 #15x15 Board Frontend
@@ -112,14 +127,13 @@ borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
         textbox[j][-1].grid(row=j,column=i)
 
 #Score board
-ScorePlayer1 = Label(root,text="Player 1: 0",width=15,font=("Courier",11))
-ScorePlayer1.grid(row = 0,column=16)
-ScorePlayer2 = Label(root,text="Player 2: 0",width=15,font=("Courier",11))
-ScorePlayer2.grid(row = 1,column=16)
+Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
+Player1Label.grid(row = 0,column=16)
+Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
+Player2Label.grid(row = 1,column=16)
 
 #Letter board
 displayCurrentLetters()
-
 
 
 
