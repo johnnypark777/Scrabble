@@ -34,6 +34,7 @@ def keyChar(event):
             usedLetters.remove(textbox[prevY][prevX].letter)
             boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
         displayCurrentLetters()
+        displayCurrentScores(prevX,prevY)
         boardSetup(-1,prevX,prevY,event.char)
         if(prevX < 14):
             buttonSelect(prevX+1,prevY)
@@ -50,6 +51,7 @@ def keyChar(event):
             currentLetters.append(textbox[prevY][prevX].letter)
             usedLetters.remove(textbox[prevY][prevX].letter)
             displayCurrentLetters()
+            displayCurrentScores(prevX,prevY)
             boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
         if(prevX!=0):
             buttonSelect(prevX-1,prevY)
@@ -89,14 +91,31 @@ def boardSetup(num,x,y,char):
     else:
         textbox[prevY][prevX].letter = ''
 
-#Letter Board
+#Letter Board Updating Function
 def displayCurrentLetters():
     givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
     givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
     for i in range(len(currentLetters)):
         givenLetters.insert("insert", currentLetters[i],"", letterScores[ord(currentLetters[i])-65], "subscript")
     givenLetters.configure(state="disabled")
-    givenLetters.grid(row = 16,column=0,columnspan=15)
+    givenLetters.grid(row = 17,column=0,columnspan=15)
+
+#Score board Updating Function
+def displayCurrentScores(prevX,prevY):
+    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn
+    if(player1Turn is 1):
+        ScorePlayer1 = 0
+        for i in range(len(usedLetters)):
+            ScorePlayer1 += letterScores[ord(usedLetters[i])-65]
+    elif(player2Turn is 1):
+        ScorePlayer2 = 0
+        for i in range(len(usedLetters)):
+            ScorePlayer2 += letterScores[ord(usedLetters[i])-65]
+    Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
+    Player1Label.grid(row = 1,column=0,columnspan=7)
+    Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
+    Player2Label.grid(row = 1,column=7,columnspan=8)
+
 
 #Saving the game data to GameData.py when closing the program.
 def windowClose():
@@ -114,9 +133,13 @@ def windowClose():
         f.write("usedLetters = "+str(usedLetters)+"\n")
         f.write("ScorePlayer1 = "+str(ScorePlayer1)+"\n")
         f.write("ScorePlayer2 = "+str(ScorePlayer2)+"\n")
+        f.write("player1Turn = "+str(player1Turn)+"\n")
+        f.write("player2Turn = "+str(player2Turn)+"\n")
         root.destroy()
 
-#15x15 Board Frontend
+#15x15 Board Interface 
+titleLabel = Label(root,text="Scrabble",width=15,font=("Courier",11))
+titleLabel.grid(row = 0,column=0,columnspan=15)
 textbox = list(list())
 for j in range(15):
     textbox.append([])
@@ -124,16 +147,12 @@ for j in range(15):
         textbox[j].append(Button(root,width=1,height=1,bg="green",highlightbackground="black",
 borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
         boardSetup(boardColor[i+15*j],i,j,boardLetter[i+15*j])
-        textbox[j][-1].grid(row=j,column=i)
+        textbox[j][-1].grid(row=j+2,column=i)
 
-#Score board
-Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
-Player1Label.grid(row = 0,column=16)
-Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
-Player2Label.grid(row = 1,column=16)
 
 #Letter board
 displayCurrentLetters()
+displayCurrentScores(-1,-1)
 
 
 
