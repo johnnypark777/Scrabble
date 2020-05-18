@@ -1,15 +1,27 @@
 from tkinter import *
 from tkinter import messagebox
 from functools import partial
-from GameData import *
+import json
+
+#Importing Saved JSON Data
+prevX,prevY = -1,-1
+letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
+savedData = json.load(open("gameData.json","r"))
+boardColor = savedData['boardColor']
+boardLetter = savedData['boardLetter']
+currentLetters = savedData['currentLetters']
+usedLetters = savedData['usedLetters']
+ScorePlayer1 = savedData['ScorePlayer1']
+ScorePlayer2 = savedData['ScorePlayer2']
+player1Turn = savedData['player1Turn']
+player2Turn = savedData['player2Turn']
+
 
 #Window Configuration
 root = Tk()
-root.title("JP Scrabble")
+root.title("Scrabble")
 root.resizable(False,False)
 
-prevX,prevY = -1,-1
-letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
 
 #Function that runs when a textbox(button) is selected.
 def buttonSelect(i,j):
@@ -126,7 +138,7 @@ def windowClose():
             for j in range(len(textbox[i])):
                 boardColor.append(textbox[i][j].color)
                 boardLetter.append(textbox[i][j].letter)
-                f = open("GameData.py","w")
+                f = open("gameData.py","w")
         f.write("boardColor = "+str(boardColor)+"\n")
         f.write("boardLetter = "+str(boardLetter)+"\n")
         f.write("currentLetters = "+str(currentLetters)+"\n")

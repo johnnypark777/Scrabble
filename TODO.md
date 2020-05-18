@@ -7,3 +7,11 @@
 ##### 2.2 Random Word Assignment Feature
 #### 3. Settings Modification Feature
 #### 4. Main Menu Feature
+
+
+#### 1st Refactor
+##### - Change the saved data format from .py to .json
+##### - Combine the displayCurrentLetters and displayCurrentScores function
+##### - Name Changes 
+1. Change the name from 'boardSetup' function to 'tileSetDisplay' function
+2. Change the global variable prevX and prevY to selectedX and selectedY
