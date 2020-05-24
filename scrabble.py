@@ -37,13 +37,17 @@ def buttonSelect(i,j):
 
 #Function when key is pressed after the button is selected.
 def keyChar(event):
-    global selectedY,selectedX,usedLetters
+    global selectedY,selectedX,usedLetters,currentLetters
     if(event.char.isalpha() and event.char.upper() in currentLetters):
+        newLetter = {}
+        newLetter['letter'] = event.char.upper()
+        newLetter['multiplier'] = textbox[selectedY][selectedX].color
+        newLetter['score'] = letterScores[ord(event.char.upper())-65]
         currentLetters.remove(event.char.upper())
-        usedLetters.append(event.char.upper())
+        usedLetters.append(newLetter)
         if(textbox[selectedY][selectedX].letter is not ''):
             currentLetters.append(textbox[selectedY][selectedX].letter)
-            usedLetters.remove(textbox[selectedY][selectedX].letter)
+            usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
             setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
         displayUpdate(selectedX,selectedY)
         setTileDisplay(-1,selectedX,selectedY,event.char)
@@ -60,7 +64,7 @@ def keyChar(event):
     if(event.keysym=="BackSpace"):
         if(textbox[selectedY][selectedX].letter is not ''):
             currentLetters.append(textbox[selectedY][selectedX].letter)
-            usedLetters.remove(textbox[selectedY][selectedX].letter)
+            usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
             displayUpdate(selectedX,selectedY)
             setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
         if(selectedX!=0):
@@ -103,7 +107,7 @@ def setTileDisplay(num,x,y,char):
 
 #Updating the tiles and the scores
 def displayUpdate(selectedX,selectedY):
-    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn
+    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn,usedLetters
     currentScorePlayer1 = 0
     currentScorePlayer2 = 0
     givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
@@ -114,19 +118,22 @@ def displayUpdate(selectedX,selectedY):
     givenLetters.grid(row = 17,column=0,columnspan=15)
     if(player1Turn is 1):
         for i in range(len(usedLetters)):
-            currentScorePlayer1 += letterScores[ord(usedLetters[i])-65]
+            print(usedLetters[i]['letter'])
+            currentScorePlayer1 += letterScores[ord(usedLetters[i]['letter'])-65]
     elif(player2Turn is 1):
         for i in range(len(usedLetters)):
-            currentScorePlayer2 += letterScores[ord(usedLetters[i])-65]
-    confirmButton = Button(root,text="Confirm",command=partial(turnPassed))
-    confirmButton.grid(row = 18, column=0, columnspan=15)
+            currentScorePlayer2 += letterScores[ord(usedLetters[i]['letter'])-65]
+    if(len(usedLetters) is 0):#Subject to change as more conditions(valid letter,valid placing) are going to be applied to pass the turn
+        confirmButton.grid_remove()
+    else:
+        confirmButton.grid()
     Player1Label = Label(root,text="Player 1: "+str(currentScorePlayer1+ScorePlayer1),width=15,font=("Courier",11))
     Player1Label.grid(row = 1,column=0,columnspan=7)
     Player2Label = Label(root,text="Player 2: "+str(currentScorePlayer2+ScorePlayer2),width=15,font=("Courier",11))
     Player2Label.grid(row = 1,column=7,columnspan=8)
 
 def turnPassed():
-    print("woks")
+    print("TODO")
 
 #Saving the game data to GameData.py when closing the program.
 def windowClose():
@@ -153,6 +160,8 @@ def windowClose():
 #15x15 Board Interface 
 titleLabel = Label(root,text="Scrabble",width=15,font=("Courier",11))
 titleLabel.grid(row = 0,column=0,columnspan=15)
+confirmButton = Button(root,text="Confirm",command=partial(turnPassed))
+confirmButton.grid(row = 18, column=0, columnspan=15)
 textbox = list(list())
 for j in range(15):
     textbox.append([])
