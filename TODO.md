@@ -17,7 +17,7 @@
 	<del>- Name Changes</del>
 		<del>1. Change the name from 'boardSetup' function to 'setTileDisplay' function</del>
 		<del>2. Change the global variable prevX and prevY to selectedX and selectedY</del>
-	 <del>- Change the letter type from char to dict and store not only the letter but also score and multiplier
-		1. Change the char array 'usedLetters' to dict array
+	 - Change the letter type from char to dict and store not only the letter but also score and multiplier
+		<del>1. Change the char array 'usedLetters' to dict array
 		 	1.1 Change the save method for usedLetters array
 			1.2 Change the load method for usedLetters array</del>
