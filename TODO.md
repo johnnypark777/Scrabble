@@ -10,10 +10,10 @@
 
 
 ### Refactor Log
-#### 1st Refactor (May 18th - Current)
-##### - Change the saved data format from .py to .json
-##### - Combine the displayCurrentLetters and displayCurrentScores function
-##### - Name Changes 
-1. Change the name from 'boardSetup' function to 'tileSetDisplay' function
-2. Change the global variable prevX and prevY to selectedX and selectedY
-##### - Change the letter type from char to dict and store not only the letter but also score and multiplier
+	1st Refactor (May 18th - Current)
+	 ~~- Change the saved data format from .py to .json~~
+	 ~~Combine the displayCurrentLetters and displayCurrentScores function~~
+	 - Name Changes 
+		~~1. Change the name from 'boardSetup' function to 'setTileDisplay' function~~
+		~~2. Change the global variable prevX and prevY to selectedX and selectedY~~
+	 - Change the letter type from char to dict and store not only the letter but also score and multiplier

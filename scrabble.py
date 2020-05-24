@@ -3,8 +3,8 @@ from tkinter import messagebox
 from functools import partial
 import json
 
+selectedX,selectedY = -1,-1
 #Importing Saved JSON Data
-prevX,prevY = -1,-1
 letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
 savedData = json.load(open("gameData.json","r"))
 boardColor = savedData['boardColor']
@@ -25,11 +25,11 @@ root.resizable(False,False)
 
 #Function that runs when a textbox(button) is selected.
 def buttonSelect(i,j):
-    global prevX,prevY
-    if (prevX != -1):
-        textbox[prevY][prevX].config(highlightbackground="black",relief=FLAT)
-        textbox[prevY][prevX].unbind('<Button-1>')
-    prevX,prevY = i,j
+    global selectedX,selectedY
+    if (selectedX != -1):
+        textbox[selectedY][selectedX].config(highlightbackground="black",relief=FLAT)
+        textbox[selectedY][selectedX].unbind('<Button-1>')
+    selectedX,selectedY = i,j
     textbox[j][i].focus_set()
     textbox[j][i].config(highlightcolor="white")
     textbox[j][i].bind('<Button-1>', lambda e: 'break')
@@ -37,51 +37,49 @@ def buttonSelect(i,j):
 
 #Function when key is pressed after the button is selected.
 def keyChar(event):
-    global prevY,prevX,usedLetters
+    global selectedY,selectedX,usedLetters
     if(event.char.isalpha() and event.char.upper() in currentLetters):
         currentLetters.remove(event.char.upper())
         usedLetters.append(event.char.upper())
-        if(textbox[prevY][prevX].letter is not ''):
-            currentLetters.append(textbox[prevY][prevX].letter)
-            usedLetters.remove(textbox[prevY][prevX].letter)
-            boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
-        displayCurrentLetters()
-        displayCurrentScores(prevX,prevY)
-        boardSetup(-1,prevX,prevY,event.char)
-        if(prevX < 14):
-            buttonSelect(prevX+1,prevY)
-    if(event.keysym=="Up" and prevY != 0):
-        buttonSelect(prevX,prevY-1)
-    if(event.keysym=="Down" and prevY != 14):
-        buttonSelect(prevX,prevY+1)
-    if(event.keysym=="Left" and prevX != 0):
-        buttonSelect(prevX-1,prevY)
-    if(event.keysym=="Right" and prevX != 14):
-        buttonSelect(prevX+1,prevY)
+        if(textbox[selectedY][selectedX].letter is not ''):
+            currentLetters.append(textbox[selectedY][selectedX].letter)
+            usedLetters.remove(textbox[selectedY][selectedX].letter)
+            setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+        displayUpdate(selectedX,selectedY)
+        setTileDisplay(-1,selectedX,selectedY,event.char)
+        if(selectedX < 14):
+            buttonSelect(selectedX+1,selectedY)
+    if(event.keysym=="Up" and selectedY != 0):
+        buttonSelect(selectedX,selectedY-1)
+    if(event.keysym=="Down" and selectedY != 14):
+        buttonSelect(selectedX,selectedY+1)
+    if(event.keysym=="Left" and selectedX != 0):
+        buttonSelect(selectedX-1,selectedY)
+    if(event.keysym=="Right" and selectedX != 14):
+        buttonSelect(selectedX+1,selectedY)
     if(event.keysym=="BackSpace"):
-        if(textbox[prevY][prevX].letter is not ''):
-            currentLetters.append(textbox[prevY][prevX].letter)
-            usedLetters.remove(textbox[prevY][prevX].letter)
-            displayCurrentLetters()
-            displayCurrentScores(prevX,prevY)
-            boardSetup(textbox[prevY][prevX].color,prevX,prevY,'')
-        if(prevX!=0):
-            buttonSelect(prevX-1,prevY)
+        if(textbox[selectedY][selectedX].letter is not ''):
+            currentLetters.append(textbox[selectedY][selectedX].letter)
+            usedLetters.remove(textbox[selectedY][selectedX].letter)
+            displayUpdate(selectedX,selectedY)
+            setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+        if(selectedX!=0):
+            buttonSelect(selectedX-1,selectedY)
     if(event.char is '1'):
-        boardSetup(0,prevX,prevY,textbox[prevY][prevX].letter)
+        setTileDisplay(0,selectedX,selectedY,textbox[selectedY][selectedX].letter)
     if(event.char is '2'):
-        if(textbox[prevY][prevX].color == 2):
-            boardSetup(1,prevX,prevY,textbox[prevY][prevX].letter)
+        if(textbox[selectedY][selectedX].color == 2):
+            setTileDisplay(1,selectedX,selectedY,textbox[selectedY][selectedX].letter)
         else:
-            boardSetup(2,prevX,prevY,textbox[prevY][prevX].letter)
+            setTileDisplay(2,selectedX,selectedY,textbox[selectedY][selectedX].letter)
     if(event.char is '3'):
-        if(textbox[prevY][prevX].color == 4):
-            boardSetup(3,prevX,prevY,textbox[prevY][prevX].letter)
+        if(textbox[selectedY][selectedX].color == 4):
+            setTileDisplay(3,selectedX,selectedY,textbox[selectedY][selectedX].letter)
         else:
-            boardSetup(4,prevX,prevY,textbox[prevY][prevX].letter)
+            setTileDisplay(4,selectedX,selectedY,textbox[selectedY][selectedX].letter)
 
 #15x15 Game board backend
-def boardSetup(num,x,y,char):
+def setTileDisplay(num,x,y,char):
     if(num == 0):
         textbox[y][x].config(bg="green",text="",relief=FLAT,activebackground="green")
         textbox[y][x].color = 0
@@ -98,36 +96,37 @@ def boardSetup(num,x,y,char):
         textbox[y][x].config(bg="red",fg="white",activeforeground="white",text="3W",relief=FLAT,activebackground="red")
         textbox[y][x].color = 4
     if(char.isalpha()):
-        textbox[prevY][prevX].config(bg="beige",fg="black",activeforeground="black",text=char.upper(),relief=FLAT,activebackground="beige")
-        textbox[prevY][prevX].letter = char.upper()
+        textbox[selectedY][selectedX].config(bg="beige",fg="black",activeforeground="black",text=char.upper(),relief=FLAT,activebackground="beige")
+        textbox[selectedY][selectedX].letter = char.upper()
     else:
-        textbox[prevY][prevX].letter = ''
+        textbox[selectedY][selectedX].letter = ''
 
-#Letter Board Updating Function
-def displayCurrentLetters():
+#Updating the tiles and the scores
+def displayUpdate(selectedX,selectedY):
+    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn
+    currentScorePlayer1 = 0
+    currentScorePlayer2 = 0
     givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
     givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
     for i in range(len(currentLetters)):
         givenLetters.insert("insert", currentLetters[i],"", letterScores[ord(currentLetters[i])-65], "subscript")
     givenLetters.configure(state="disabled")
     givenLetters.grid(row = 17,column=0,columnspan=15)
-
-#Score board Updating Function
-def displayCurrentScores(prevX,prevY):
-    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn
     if(player1Turn is 1):
-        ScorePlayer1 = 0
         for i in range(len(usedLetters)):
-            ScorePlayer1 += letterScores[ord(usedLetters[i])-65]
+            currentScorePlayer1 += letterScores[ord(usedLetters[i])-65]
     elif(player2Turn is 1):
-        ScorePlayer2 = 0
         for i in range(len(usedLetters)):
-            ScorePlayer2 += letterScores[ord(usedLetters[i])-65]
-    Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
+            currentScorePlayer2 += letterScores[ord(usedLetters[i])-65]
+    confirmButton = Button(root,text="Confirm",command=partial(turnPassed))
+    confirmButton.grid(row = 18, column=0, columnspan=15)
+    Player1Label = Label(root,text="Player 1: "+str(currentScorePlayer1+ScorePlayer1),width=15,font=("Courier",11))
     Player1Label.grid(row = 1,column=0,columnspan=7)
-    Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
+    Player2Label = Label(root,text="Player 2: "+str(currentScorePlayer2+ScorePlayer2),width=15,font=("Courier",11))
     Player2Label.grid(row = 1,column=7,columnspan=8)
 
+def turnPassed():
+    print("woks")
 
 #Saving the game data to GameData.py when closing the program.
 def windowClose():
@@ -139,14 +138,16 @@ def windowClose():
                 boardColor.append(textbox[i][j].color)
                 boardLetter.append(textbox[i][j].letter)
                 f = open("gameData.py","w")
-        f.write("boardColor = "+str(boardColor)+"\n")
-        f.write("boardLetter = "+str(boardLetter)+"\n")
-        f.write("currentLetters = "+str(currentLetters)+"\n")
-        f.write("usedLetters = "+str(usedLetters)+"\n")
-        f.write("ScorePlayer1 = "+str(ScorePlayer1)+"\n")
-        f.write("ScorePlayer2 = "+str(ScorePlayer2)+"\n")
-        f.write("player1Turn = "+str(player1Turn)+"\n")
-        f.write("player2Turn = "+str(player2Turn)+"\n")
+        savedData = {}
+        savedData['boardColor']     = boardColor
+        savedData['boardLetter']    = boardLetter
+        savedData['currentLetters'] = currentLetters
+        savedData['usedLetters']    = usedLetters
+        savedData['ScorePlayer1']   = ScorePlayer1
+        savedData['ScorePlayer2']   = ScorePlayer2
+        savedData['player1Turn']    = player1Turn
+        savedData['player2Turn']    = player2Turn
+        jsonLetterList = json.dump(savedData,open("gameData.json","w"),indent=2,ensure_ascii=True,sort_keys=True)
         root.destroy()
 
 #15x15 Board Interface 
@@ -158,14 +159,12 @@ for j in range(15):
     for i in range(15):
         textbox[j].append(Button(root,width=1,height=1,bg="green",highlightbackground="black",
 borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
-        boardSetup(boardColor[i+15*j],i,j,boardLetter[i+15*j])
+        setTileDisplay(boardColor[i+15*j],i,j,boardLetter[i+15*j])
         textbox[j][-1].grid(row=j+2,column=i)
 
 
-#Letter board
-displayCurrentLetters()
-displayCurrentScores(-1,-1)
-
+#Set Letter and Score board
+displayUpdate(selectedX,selectedY)
 
 
 root.protocol("WM_DELETE_WINDOW",windowClose)
