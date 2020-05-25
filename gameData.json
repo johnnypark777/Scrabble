@@ -341,8 +341,8 @@
     "",
     "",
     "",
-    "",
-    "",
+    "A",
+    "B",
     "",
     "",
     "",
@@ -460,11 +460,20 @@
     "F",
     "E",
     "D",
-    "C",
-    "B",
-    "A"
+    "C"
   ],
   "player1Turn": 1,
   "player2Turn": 0,
-  "usedLetters": []
+  "usedLetters": [
+    {
+      "letter": "A",
+      "multiplier": 2,
+      "score": 1
+    },
+    {
+      "letter": "B",
+      "multiplier": 0,
+      "score": 3
+    }
+  ]
 }

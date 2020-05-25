@@ -116,13 +116,29 @@ def displayUpdate(selectedX,selectedY):
         givenLetters.insert("insert", currentLetters[i],"", letterScores[ord(currentLetters[i])-65], "subscript")
     givenLetters.configure(state="disabled")
     givenLetters.grid(row = 17,column=0,columnspan=15)
+
+    #TODO refactor (combine currentScorePlayer1 and currentScorePlayer2)
     if(player1Turn is 1):
+        multiple = 1
         for i in range(len(usedLetters)):
-            print(usedLetters[i]['letter'])
-            currentScorePlayer1 += letterScores[ord(usedLetters[i]['letter'])-65]
+            if(usedLetters[i]['multiplier'] == 0):
+                currentScorePlayer1 += usedLetters[i]['score']
+            elif(usedLetters[i]['multiplier'] == 1):
+                currentScorePlayer1 += usedLetters[i]['score']*2
+            elif(usedLetters[i]['multiplier'] == 2):
+                multiple *= 2
+                currentScorePlayer1 += usedLetters[i]['score']
+            elif(usedLetters[i]['multiplier'] == 3):
+                currentScorePlayer1 += usedLetters[i]['score']*3
+            elif(usedLetters[i]['multiplier'] == 4):
+                multiple *= 3
+                currentScorePlayer1 += usedLetters[i]['score']
+            print("Before",currentScorePlayer1)
+            currentScorePlayer1 *= multiple
+            print("After",currentScorePlayer1)
     elif(player2Turn is 1):
         for i in range(len(usedLetters)):
-            currentScorePlayer2 += letterScores[ord(usedLetters[i]['letter'])-65]
+            currentScorePlayer2 += usedLetters[i]['score']
     if(len(usedLetters) is 0):#Subject to change as more conditions(valid letter,valid placing) are going to be applied to pass the turn
         confirmButton.grid_remove()
     else:
