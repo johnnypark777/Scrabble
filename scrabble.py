@@ -1,15 +1,19 @@
 from tkinter import *
 from tkinter import messagebox
+from random import randint
 from functools import partial
 import json
 
 selectedX,selectedY = -1,-1
 #Importing Saved JSON Data
 letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
+letterDistribution = [9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1]
 savedData = json.load(open("gameData.json","r"))
 boardColor = savedData['boardColor']
 boardLetter = savedData['boardLetter']
 currentLetters = savedData['currentLetters']
+player1Tiles = savedData['player1Tiles']
+player2Tiles = savedData['player2Tiles']
 usedLetters = savedData['usedLetters']
 ScorePlayer1 = savedData['ScorePlayer1']
 ScorePlayer2 = savedData['ScorePlayer2']
@@ -37,12 +41,14 @@ def buttonSelect(i,j):
 
 #Function when key is pressed after the button is selected.
 def keyChar(event):
-    global selectedY,selectedX,usedLetters,currentLetters
+    global selectedY,selectedX,usedLetter,currentLetters,player1Turn,player2Turn,player1Tiles,player2Tiles
     if(event.char.isalpha() and event.char.upper() in currentLetters):
         newLetter = {}
         newLetter['letter'] = event.char.upper()
         newLetter['multiplier'] = textbox[selectedY][selectedX].color
         newLetter['score'] = letterScores[ord(event.char.upper())-65]
+        newLetter['xCord'] = selectedX
+        newLetter['yCord'] = selectedY
         currentLetters.remove(event.char.upper())
         usedLetters.append(newLetter)
         if(textbox[selectedY][selectedX].letter is not ''):
@@ -63,6 +69,8 @@ def keyChar(event):
         buttonSelect(selectedX+1,selectedY)
     if(event.keysym=="BackSpace"):
         if(textbox[selectedY][selectedX].letter is not ''):
+            #TODO
+            #if any(usedLetters['xCord'] == selectedX)
             currentLetters.append(textbox[selectedY][selectedX].letter)
             usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
             displayUpdate(selectedX,selectedY)
@@ -107,51 +115,57 @@ def setTileDisplay(num,x,y,char):
 
 #Updating the tiles and the scores
 def displayUpdate(selectedX,selectedY):
-    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn,usedLetters
-    currentScorePlayer1 = 0
-    currentScorePlayer2 = 0
+    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn,player1Tiles,player2Tiles
+    currentPlayerTempScore = 0
     givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
     givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
     for i in range(len(currentLetters)):
         givenLetters.insert("insert", currentLetters[i],"", letterScores[ord(currentLetters[i])-65], "subscript")
     givenLetters.configure(state="disabled")
-    givenLetters.grid(row = 17,column=0,columnspan=15)
+    givenLetters.grid(row = 18,column=0,columnspan=15)
 
-    #TODO refactor (combine currentScorePlayer1 and currentScorePlayer2)
+    #Calculating current score (before passing the turn)
+    multiple = 1
+    for i in range(len(usedLetters)):
+        if(usedLetters[i]['multiplier'] == 0):
+            currentPlayerTempScore += usedLetters[i]['score']
+        elif(usedLetters[i]['multiplier'] == 1):
+            currentPlayerTempScore += usedLetters[i]['score']*2
+        elif(usedLetters[i]['multiplier'] == 2):
+            multiple *= 2
+            currentPlayerTempScore += usedLetters[i]['score']
+        elif(usedLetters[i]['multiplier'] == 3):
+            currentPlayerTempScore += usedLetters[i]['score']*3
+        elif(usedLetters[i]['multiplier'] == 4):
+            multiple *= 3
+            currentPlayerTempScore += usedLetters[i]['score']
+    currentPlayerTempScore *= multiple
+    if(len(usedLetters) is 7):
+        currentPlayerTempScore += 50
+
     if(player1Turn is 1):
-        multiple = 1
-        for i in range(len(usedLetters)):
-            if(usedLetters[i]['multiplier'] == 0):
-                currentScorePlayer1 += usedLetters[i]['score']
-            elif(usedLetters[i]['multiplier'] == 1):
-                currentScorePlayer1 += usedLetters[i]['score']*2
-            elif(usedLetters[i]['multiplier'] == 2):
-                multiple *= 2
-                currentScorePlayer1 += usedLetters[i]['score']
-            elif(usedLetters[i]['multiplier'] == 3):
-                currentScorePlayer1 += usedLetters[i]['score']*3
-            elif(usedLetters[i]['multiplier'] == 4):
-                multiple *= 3
-                currentScorePlayer1 += usedLetters[i]['score']
-            print("Before",currentScorePlayer1)
-            currentScorePlayer1 *= multiple
-            print("After",currentScorePlayer1)
+        Player1Label = Label(root,text="Player 1: "+str(currentPlayerTempScore+ScorePlayer1),width=15,font=("Courier",11))
+        Player1Label.grid(row = 1,column=0,columnspan=7)
     elif(player2Turn is 1):
-        for i in range(len(usedLetters)):
-            currentScorePlayer2 += usedLetters[i]['score']
+        Player2Label = Label(root,text="Player 2: "+str(currentPlayerTempScore+ScorePlayer2),width=15,font=("Courier",11))
+        Player2Label.grid(row = 1,column=7,columnspan=8)
+
     if(len(usedLetters) is 0):#Subject to change as more conditions(valid letter,valid placing) are going to be applied to pass the turn
         confirmButton.grid_remove()
     else:
         confirmButton.grid()
-    Player1Label = Label(root,text="Player 1: "+str(currentScorePlayer1+ScorePlayer1),width=15,font=("Courier",11))
-    Player1Label.grid(row = 1,column=0,columnspan=7)
-    Player2Label = Label(root,text="Player 2: "+str(currentScorePlayer2+ScorePlayer2),width=15,font=("Courier",11))
-    Player2Label.grid(row = 1,column=7,columnspan=8)
 
 def turnPassed():
-    print("TODO")
+    global player1Turn,player2Turn
+    player1Turn,player2Turn = player2Turn,player1Turn
+    if(player1Turn is 1):
+        currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
+        currentPlayer.grid(row = 2,column=0,columnspan=15)
+    else:
+        currentPlayer = Label(root,text="Current Turn: Player 2",font=("Courier",11))
+        currentPlayer.grid(row = 2,column=0,columnspan=15)
 
-#Saving the game data to GameData.py when closing the program.
+#Saving the game data to gameData.json when closing the program.
 def windowClose():
     if messagebox.askokcancel("Exit?", "Exit?"):
         boardColor = list()
@@ -160,7 +174,6 @@ def windowClose():
             for j in range(len(textbox[i])):
                 boardColor.append(textbox[i][j].color)
                 boardLetter.append(textbox[i][j].letter)
-                f = open("gameData.py","w")
         savedData = {}
         savedData['boardColor']     = boardColor
         savedData['boardLetter']    = boardLetter
@@ -168,6 +181,8 @@ def windowClose():
         savedData['usedLetters']    = usedLetters
         savedData['ScorePlayer1']   = ScorePlayer1
         savedData['ScorePlayer2']   = ScorePlayer2
+        savedData['player1Tiles']   = player1Tiles
+        savedData['player2Tiles']   = player2Tiles
         savedData['player1Turn']    = player1Turn
         savedData['player2Turn']    = player2Turn
         jsonLetterList = json.dump(savedData,open("gameData.json","w"),indent=2,ensure_ascii=True,sort_keys=True)
@@ -177,7 +192,18 @@ def windowClose():
 titleLabel = Label(root,text="Scrabble",width=15,font=("Courier",11))
 titleLabel.grid(row = 0,column=0,columnspan=15)
 confirmButton = Button(root,text="Confirm",command=partial(turnPassed))
-confirmButton.grid(row = 18, column=0, columnspan=15)
+confirmButton.grid(row = 19, column=0, columnspan=15)
+Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
+Player1Label.grid(row = 1,column=0,columnspan=7)
+Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
+Player2Label.grid(row = 1,column=7,columnspan=8)
+if(player1Turn is 1):
+    currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
+    currentPlayer.grid(row = 2,column=0,columnspan=15)
+else:
+    currentPlayer = Label(root,text="Current Turn: Player 2",font=("Courier",11))
+    currentPlayer.grid(row = 2,column=0,columnspan=15)
+
 textbox = list(list())
 for j in range(15):
     textbox.append([])
@@ -185,8 +211,7 @@ for j in range(15):
         textbox[j].append(Button(root,width=1,height=1,bg="green",highlightbackground="black",
 borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
         setTileDisplay(boardColor[i+15*j],i,j,boardLetter[i+15*j])
-        textbox[j][-1].grid(row=j+2,column=i)
-
+        textbox[j][-1].grid(row=j+3,column=i)
 
 #Set Letter and Score board
 displayUpdate(selectedX,selectedY)
