@@ -26,4 +26,6 @@
 	2nd Refactor (May 25th - Current)
 	- Remove 'currentLetters' in gameData.json and replace with player1Letters and player2Letters
 	- Modify the letter erasing function.
+		1. Assign Random letters(for now instead of making it as text input) when a player has less than 7 tiles. (** CURRENT **)
+
 

@@ -325,6 +325,13 @@
     "",
     "",
     "",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
     "",
     "",
     "",
@@ -333,18 +340,11 @@
     "",
     "",
     "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
     "",
     "",
     "",
@@ -455,18 +455,27 @@
     "",
     ""
   ],
-  "currentLetters": [
-    "G",
-    "F",
-    "E",
-    "D",
-    "C",
-    "B",
-    "A"
-  ],
   "player1Tiles": [],
-  "player1Turn": 0,
-  "player2Tiles": [],
-  "player2Turn": 1,
-  "usedLetters": []
+  "player1Turn": 1,
+  "player2Tiles": [
+    "N",
+    "M"
+  ],
+  "player2Turn": 0,
+  "usedLetters": [
+    {
+      "letter": "F",
+      "multiplier": 0,
+      "score": 4,
+      "xCord": 11,
+      "yCord": 6
+    },
+    {
+      "letter": "G",
+      "multiplier": 1,
+      "score": 2,
+      "xCord": 12,
+      "yCord": 6
+    }
+  ]
 }
