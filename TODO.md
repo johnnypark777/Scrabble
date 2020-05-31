@@ -5,6 +5,7 @@
 ##### 2.1 Game Scoring Feature 
 ##### 2.1.1 Correct Calculations
 ##### 2.2 Random Word Assignment Feature
+##### 2.2.1 Correct Word Assignment
 ##### 2.3 Turn Passing Feature(With Submit Button)
 	- Currently turn can be passed, but random word assignment has not been implemented yet.
 #### 3. Settings Modification Feature
@@ -25,7 +26,9 @@
 
 	2nd Refactor (May 25th - Current)
 	- Remove 'currentLetters' in gameData.json and replace with player1Letters and player2Letters
-	- Modify the letter erasing function.
-		1. Assign Random letters(for now instead of making it as text input) when a player has less than 7 tiles. (** CURRENT **)
+	- Modify the letter erasing function(Only erasing what is allowed to erase).
+		1. Assign Random letters(for now instead of making it as text input) when a player has less than 7 tiles. 
+		2. Correct Word Assignments (TODO List 2.2.1) (** CURRENT **)
+	- Correct Scoring Calculations (TODO List 2.1.1 -> 2.1)
 
 

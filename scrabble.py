@@ -14,8 +14,8 @@ boardLetter = savedData['boardLetter']
 player1Tiles = savedData['player1Tiles']
 player2Tiles = savedData['player2Tiles']
 usedLetters = savedData['usedLetters']
-ScorePlayer1 = savedData['ScorePlayer1']
-ScorePlayer2 = savedData['ScorePlayer2']
+scorePlayer1 = savedData['scorePlayer1']
+scorePlayer2 = savedData['scorePlayer2']
 player1Turn = savedData['player1Turn']
 player2Turn = savedData['player2Turn']
 
@@ -138,10 +138,11 @@ def setTileDisplay(num,x,y,char):
         textbox[selectedY][selectedX].letter = ''
 
 #Updating the tiles and the scores
+currentPlayerTempScore = 0
 def displayUpdate(selectedX,selectedY):
-    global ScorePlayer1,ScorePlayer2,player1Turn,player2Turn,player1Tiles,player2Tiles
+    global scorePlayer1,scorePlayer2,player1Turn,player2Turn,player1Tiles,player2Tiles,currentPlayerTempScore
     currentPlayerTempScore = 0
-    givenLetters = Text(root, width=11, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
+    givenLetters = Text(root, width=12, height=1, borderwidth=0,background=root.cget("background"),font=("Courier",25))
     givenLetters.tag_configure("subscript", offset=-4,font=("Courier",13))
     if(player1Turn is 1):
         for i in range(len(player1Tiles)):
@@ -172,12 +173,11 @@ def displayUpdate(selectedX,selectedY):
     currentPlayerTempScore *= multiple
     if(len(usedLetters) is 7):
         currentPlayerTempScore += 50
-
     if(player1Turn is 1):
-        Player1Label = Label(root,text="Player 1: "+str(currentPlayerTempScore+ScorePlayer1),width=15,font=("Courier",11))
+        Player1Label = Label(root,text="Player 1: "+str(currentPlayerTempScore+scorePlayer1),width=15,font=("Courier",11))
         Player1Label.grid(row = 1,column=0,columnspan=7)
     elif(player2Turn is 1):
-        Player2Label = Label(root,text="Player 2: "+str(currentPlayerTempScore+ScorePlayer2),width=15,font=("Courier",11))
+        Player2Label = Label(root,text="Player 2: "+str(currentPlayerTempScore+scorePlayer2),width=15,font=("Courier",11))
         Player2Label.grid(row = 1,column=7,columnspan=8)
 
     if(len(usedLetters) is 0):#Subject to change as more conditions(valid letter,valid placing) are going to be applied to pass the turn
@@ -186,18 +186,22 @@ def displayUpdate(selectedX,selectedY):
         confirmButton.grid()
 
 def turnPassed():
-    global player1Turn,player2Turn
+    global player1Turn,player2Turn,currentPlayerTempScore,scorePlayer1,scorePlayer2
     player1Turn,player2Turn = player2Turn,player1Turn
+    print(currentPlayerTempScore)
     if(player1Turn is 1):
+        scorePlayer2 += currentPlayerTempScore
         currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
-        #TODO
-        #while len(player2Tiles) < 7:
-        #    randint(0,26)+65
-
+        while len(player2Tiles) < 7:
+            player2Tiles.append(chr(randint(0,25)+65))
     else:
+        scorePlayer1 += currentPlayerTempScore
         currentPlayer = Label(root,text="Current Turn: Player 2",font=("Courier",11))
+        while len(player1Tiles) < 7:
+            player1Tiles.append(chr(randint(0,25)+65))
     currentPlayer.grid(row = 2,column=0,columnspan=15)
     usedLetters.clear()
+    currentPlayerTempScore = 0
     displayUpdate(-1,-1)
 
 #Saving the game data to gameData.json when closing the program.
@@ -213,8 +217,8 @@ def windowClose():
         savedData['boardColor']     = boardColor
         savedData['boardLetter']    = boardLetter
         savedData['usedLetters']    = usedLetters
-        savedData['ScorePlayer1']   = ScorePlayer1
-        savedData['ScorePlayer2']   = ScorePlayer2
+        savedData['scorePlayer1']   = scorePlayer1
+        savedData['scorePlayer2']   = scorePlayer2
         savedData['player1Tiles']   = player1Tiles
         savedData['player2Tiles']   = player2Tiles
         savedData['player1Turn']    = player1Turn
@@ -227,9 +231,9 @@ titleLabel = Label(root,text="Scrabble",width=15,font=("Courier",11))
 titleLabel.grid(row = 0,column=0,columnspan=15)
 confirmButton = Button(root,text="Confirm",command=partial(turnPassed))
 confirmButton.grid(row = 19, column=0, columnspan=15)
-Player1Label = Label(root,text="Player 1: "+str(ScorePlayer1),width=15,font=("Courier",11))
+Player1Label = Label(root,text="Player 1: "+str(scorePlayer1),width=15,font=("Courier",11))
 Player1Label.grid(row = 1,column=0,columnspan=7)
-Player2Label = Label(root,text="Player 2: "+str(ScorePlayer2),width=15,font=("Courier",11))
+Player2Label = Label(root,text="Player 2: "+str(scorePlayer2),width=15,font=("Courier",11))
 Player2Label.grid(row = 1,column=7,columnspan=8)
 if(player1Turn is 1):
     currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
@@ -248,6 +252,11 @@ borderwidth=0,activebackground="green",command=partial(buttonSelect,i,j)))
         textbox[j][-1].grid(row=j+3,column=i)
 
 #Set Letter and Score board
+if not usedLetters:
+    while len(player1Tiles) < 7:
+        player1Tiles.append(chr(randint(0,25)+65))
+    while len(player2Tiles) < 7:
+        player2Tiles.append(chr(randint(0,25)+65))
 displayUpdate(selectedX,selectedY)
 
 
