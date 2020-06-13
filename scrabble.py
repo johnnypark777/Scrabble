@@ -44,6 +44,7 @@ def buttonSelect(i,j):
 #Function when key is pressed after the button is selected.
 def keyChar(event):
     global selectedY,selectedX,usedLetter,player1Turn,player2Turn,player1Tiles,player2Tiles
+    #Refactor List
     if(player1Turn is 1):
         if(event.char.isalpha() and event.char.upper() in player1Tiles):
             newLetter = {}
@@ -58,6 +59,7 @@ def keyChar(event):
                 player1Tiles.append(textbox[selectedY][selectedX].letter)
                 usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
                 setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+            textbox[selectedY][selectedX].letter = event.char.upper()
             displayUpdate(selectedX,selectedY)
             setTileDisplay(-1,selectedX,selectedY,event.char)
             if(selectedX < 14):
@@ -77,6 +79,7 @@ def keyChar(event):
                 #Remove element from list
                 usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
                 setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+            textbox[selectedY][selectedX].letter = event.char.upper()
             displayUpdate(selectedX,selectedY)
             setTileDisplay(-1,selectedX,selectedY,event.char)
             if(selectedX < 14):
@@ -95,11 +98,13 @@ def keyChar(event):
                 if(player1Turn is 1):
                     player1Tiles.append(textbox[selectedY][selectedX].letter)
                     usedLetters[:] = [d for d in usedLetters if d.get('xCord') != selectedX or d.get('yCord') != selectedY]
+                    textbox[selectedY][selectedX].letter = ''
                     displayUpdate(selectedX,selectedY)
                     setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
                 if(player2Turn is 1):
                     player2Tiles.append(textbox[selectedY][selectedX].letter)
                     usedLetters[:] = [d for d in usedLetters if d.get('xCord') != selectedX or d.get('yCord') != selectedY]
+                    textbox[selectedY][selectedX].letter = ''
                     displayUpdate(selectedX,selectedY)
                     setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
         if(selectedX!=0):
@@ -194,8 +199,9 @@ def isValidWord():
         maxX = max(xList)
         yList = [y['yCord'] for y in usedLetters]
         minY = min(yList)
-        maxY = max(yList)
-        if(minX != maxX and minY != maxY or (sorted(xList) != list(range(min(xList), max(xList)+1)) and sorted(yList) != list(range(min(yList), max(yList)+1))) and adjacentWord()):
+        maxY =  max(yList)
+        print(minX,minY)
+        if(minX != maxX and minY != maxY or not adjacentWord(minX,minY)):
             currentPlayerTempScore = 0
             return False
         elif(minX == maxX):
@@ -204,8 +210,29 @@ def isValidWord():
         else:
             sorted(usedLetters, key=lambda k: k['yCord'])
             return True
-def adjacentWord():
-    return True
+
+
+def adjacentWord(minX,minY):
+    x = []
+    for i in range(15):
+        x.append([])
+        for j in range(15):
+            x[i].append(textbox[i][j].letter)
+    floodFill(x,minY,minX)
+    return all(tile is '' for row in x for tile in row)
+
+def floodFill(board,x,y):
+    if type(board[x][y]) is str and board[x][y].isalpha():
+        board[x][y] = ""
+        if(x>0):
+            floodFill(board,x-1,y)
+        if(x<len(board[y])-1):
+            floodFill(board,x+1,y)
+        if(y>0):
+            floodFill(board,x,y-1)
+        if(y<len(board[x])-1):
+            floodFill(board,x,y+1)
+
 def turnPassed():
     global player1Turn,player2Turn,currentPlayerTempScore,scorePlayer1,scorePlayer2
     player1Turn,player2Turn = player2Turn,player1Turn
