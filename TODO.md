@@ -31,4 +31,6 @@
 	- Correct Scoring Calculations (TODO List 2.1.1 -> 2.1) (** CURRENT **)  
 		1. Convert 'boardLetter' data from 1D to 2D. 
 
+	Bug Report
+	- User can replace the words that are not allowed (backspace is fine) 
 

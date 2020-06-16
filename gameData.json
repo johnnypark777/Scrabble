@@ -337,7 +337,7 @@
       "",
       "",
       "",
-      "R",
+      "",
       "",
       "",
       "",
@@ -512,7 +512,8 @@
     0
   ],
   "player1Tiles": [
-    "K"
+    "K",
+    "R"
   ],
   "player1Turn": 1,
   "player2Tiles": [
@@ -528,13 +529,6 @@
   "scorePlayer1": 28,
   "scorePlayer2": 48,
   "usedLetters": [
-    {
-      "letter": "R",
-      "multiplier": 0,
-      "score": 1,
-      "xCord": 7,
-      "yCord": 6
-    },
     {
       "letter": "F",
       "multiplier": 0,

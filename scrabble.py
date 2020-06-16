@@ -56,9 +56,11 @@ def keyChar(event):
             player1Tiles.remove(event.char.upper())
             usedLetters.append(newLetter)
             if(textbox[selectedY][selectedX].letter is not ''):
-                player1Tiles.append(textbox[selectedY][selectedX].letter)
-                usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
-                setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+                if any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters):
+                    print("TODO")
+                    player1Tiles.append(textbox[selectedY][selectedX].letter)
+                    usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
+                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
             textbox[selectedY][selectedX].letter = event.char.upper()
             displayUpdate(selectedX,selectedY)
             setTileDisplay(-1,selectedX,selectedY,event.char)
@@ -75,10 +77,11 @@ def keyChar(event):
             player2Tiles.remove(event.char.upper())
             usedLetters.append(newLetter)
             if(textbox[selectedY][selectedX].letter is not ''):
-                player2Tiles.append(textbox[selectedY][selectedX].letter)
-                #Remove element from list
-                usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
-                setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+                if any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters):
+                    player2Tiles.append(textbox[selectedY][selectedX].letter)
+                    #Remove element from list
+                    usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
+                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
             textbox[selectedY][selectedX].letter = event.char.upper()
             displayUpdate(selectedX,selectedY)
             setTileDisplay(-1,selectedX,selectedY,event.char)
