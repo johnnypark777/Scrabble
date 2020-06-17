@@ -3,6 +3,7 @@ from tkinter import messagebox
 from random import randint
 from functools import partial
 import json
+import string
 
 selectedX,selectedY = -1,-1
 #Importing Saved JSON Data
@@ -45,48 +46,37 @@ def buttonSelect(i,j):
 def keyChar(event):
     global selectedY,selectedX,usedLetter,player1Turn,player2Turn,player1Tiles,player2Tiles
     #Refactor List
-    if(player1Turn is 1):
-        if(event.char.isalpha() and event.char.upper() in player1Tiles):
-            newLetter = {}
-            newLetter['letter'] = event.char.upper()
-            newLetter['multiplier'] = textbox[selectedY][selectedX].color
-            newLetter['score'] = letterScores[ord(event.char.upper())-65]
-            newLetter['xCord'] = selectedX
-            newLetter['yCord'] = selectedY
+    if(event.char.isalpha()):
+        newLetter = {}
+        newLetter['letter'] = event.char.upper()
+        newLetter['multiplier'] = textbox[selectedY][selectedX].color
+        newLetter['score'] = letterScores[ord(event.char.upper())-65]
+        newLetter['xCord'] = selectedX
+        newLetter['yCord'] = selectedY
+        ##Checking if you are allowed to replace this specific letter in the first place
+        if(textbox[selectedY][selectedX].letter is not ''):
+            if not(any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters)):
+                return None
+        ##If is player 1's turn and is on the player's word list
+        if(player1Turn and event.char.upper() in player1Tiles):
             player1Tiles.remove(event.char.upper())
-            usedLetters.append(newLetter)
             if(textbox[selectedY][selectedX].letter is not ''):
-                if any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters):
-                    print("TODO")
-                    player1Tiles.append(textbox[selectedY][selectedX].letter)
-                    usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
-                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
-            textbox[selectedY][selectedX].letter = event.char.upper()
-            displayUpdate(selectedX,selectedY)
-            setTileDisplay(-1,selectedX,selectedY,event.char)
-            if(selectedX < 14):
-                buttonSelect(selectedX+1,selectedY)
-    if(player2Turn is 1):
-        if(event.char.isalpha() and event.char.upper() in player2Tiles):
-            newLetter = {}
-            newLetter['letter'] = event.char.upper()
-            newLetter['multiplier'] = textbox[selectedY][selectedX].color
-            newLetter['score'] = letterScores[ord(event.char.upper())-65]
-            newLetter['xCord'] = selectedX
-            newLetter['yCord'] = selectedY
+                player1Tiles.append(textbox[selectedY][selectedX].letter)
+        ##Else if is player 2's turn and is on the player's word list
+        elif(player2Turn and event.char.upper() in player2Tiles):
             player2Tiles.remove(event.char.upper())
-            usedLetters.append(newLetter)
             if(textbox[selectedY][selectedX].letter is not ''):
-                if any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters):
-                    player2Tiles.append(textbox[selectedY][selectedX].letter)
-                    #Remove element from list
-                    usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
-                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
-            textbox[selectedY][selectedX].letter = event.char.upper()
-            displayUpdate(selectedX,selectedY)
-            setTileDisplay(-1,selectedX,selectedY,event.char)
-            if(selectedX < 14):
-                buttonSelect(selectedX+1,selectedY)
+                player2Tiles.append(textbox[selectedY][selectedX].letter)
+        else:
+            return None
+        ##If a valid move was played, add the word to the 'usedLetters' array
+        usedLetters.append(newLetter)
+        usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
+        textbox[selectedY][selectedX].letter = event.char.upper()
+        displayUpdate(selectedX,selectedY)
+        setTileDisplay(-1,selectedX,selectedY,event.char)
+        if(selectedX < 14):
+            buttonSelect(selectedX+1,selectedY)
     if(event.keysym=="Up" and selectedY != 0):
         buttonSelect(selectedX,selectedY-1)
     if(event.keysym=="Down" and selectedY != 14):
@@ -98,18 +88,14 @@ def keyChar(event):
     if(event.keysym=="BackSpace"):
         if(textbox[selectedY][selectedX].letter is not ''):
             if any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters):
-                if(player1Turn is 1):
+                if(player1Turn):
                     player1Tiles.append(textbox[selectedY][selectedX].letter)
-                    usedLetters[:] = [d for d in usedLetters if d.get('xCord') != selectedX or d.get('yCord') != selectedY]
-                    textbox[selectedY][selectedX].letter = ''
-                    displayUpdate(selectedX,selectedY)
-                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
-                if(player2Turn is 1):
+                if(player2Turn):
                     player2Tiles.append(textbox[selectedY][selectedX].letter)
-                    usedLetters[:] = [d for d in usedLetters if d.get('xCord') != selectedX or d.get('yCord') != selectedY]
-                    textbox[selectedY][selectedX].letter = ''
-                    displayUpdate(selectedX,selectedY)
-                    setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
+                usedLetters[:] = [d for d in usedLetters if d.get('xCord') != selectedX or d.get('yCord') != selectedY]
+                textbox[selectedY][selectedX].letter = ''
+                displayUpdate(selectedX,selectedY)
+                setTileDisplay(textbox[selectedY][selectedX].color,selectedX,selectedY,'')
         if(selectedX!=0):
             buttonSelect(selectedX-1,selectedY)
     if(event.char is '1'):
@@ -129,19 +115,16 @@ def keyChar(event):
 def setTileDisplay(num,x,y,char):
     if(num == 0):
         textbox[y][x].config(bg="green",text="",relief=FLAT,activebackground="green")
-        textbox[y][x].color = 0
     if(num == 1):
         textbox[y][x].config(bg="light blue",fg="black",activeforeground="black",text="2L",relief=FLAT,activebackground="light blue")
-        textbox[y][x].color = 1
     if(num == 2):
         textbox[y][x].config(bg="pink",fg="black",activeforeground="black",text="2W",relief=FLAT,activebackground="pink")
-        textbox[y][x].color = 2
     if(num == 3):
         textbox[y][x].config(bg="blue",fg="white",activeforeground="white",text="3L",relief=FLAT,activebackground="blue")
-        textbox[y][x].color = 3
     if(num == 4):
         textbox[y][x].config(bg="red",fg="white",activeforeground="white",text="3W",relief=FLAT,activebackground="red")
-        textbox[y][x].color = 4
+    if(num != -1):
+        textbox[y][x].color = num
     if(char.isalpha()):
         textbox[selectedY][selectedX].config(bg="beige",fg="black",activeforeground="black",text=char.upper(),relief=FLAT,activebackground="beige")
         textbox[selectedY][selectedX].letter = char.upper()
@@ -158,13 +141,11 @@ def displayUpdate(selectedX,selectedY):
     if(player1Turn is 1):
         for i in range(len(player1Tiles)):
             givenLetters.insert("insert", player1Tiles[i],"", letterScores[ord(player1Tiles[i])-65], "subscript")
-        givenLetters.configure(state="disabled")
-        givenLetters.grid(row = 18,column=0,columnspan=15)
     if(player2Turn is 1):
         for i in range(len(player2Tiles)):
             givenLetters.insert("insert", player2Tiles[i],"", letterScores[ord(player2Tiles[i])-65], "subscript")
-        givenLetters.configure(state="disabled")
-        givenLetters.grid(row = 18,column=0,columnspan=15)
+    givenLetters.configure(state="disabled")
+    givenLetters.grid(row = 18,column=0,columnspan=15)
 
     confirmButton.grid_remove()
     #Calculating current score after confirming the word is valid (before passing the turn)
@@ -238,29 +219,28 @@ def floodFill(board,x,y):
 
 def turnPassed():
     global player1Turn,player2Turn,currentPlayerTempScore,scorePlayer1,scorePlayer2
-    player1Turn,player2Turn = player2Turn,player1Turn
-    if(player1Turn is 1):
-        scorePlayer2 += currentPlayerTempScore
-        currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
-        while len(player2Tiles) < 7:
-            randNum = randint(0,25)
-            while letterDistribution[randNum] is 0:
-                randNum = randint(0,25)
-            letterDistribution[randNum] -= 1
-            player2Tiles.append(chr(randNum+65))
-    else:
+    randNum = randint(0,25)
+    if(player1Turn):
         scorePlayer1 += currentPlayerTempScore
         currentPlayer = Label(root,text="Current Turn: Player 2",font=("Courier",11))
         while len(player1Tiles) < 7:
-            randNum = randint(0,25)
             while letterDistribution[randNum] is 0:
                 randNum = randint(0,25)
             letterDistribution[randNum] -= 1
             player1Tiles.append(chr(randNum+65))
+    if(player2Turn):
+        scorePlayer2 += currentPlayerTempScore
+        currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
+        while len(player2Tiles) < 7:
+            while letterDistribution[randNum] is 0:
+                randNum = randint(0,25)
+            letterDistribution[randNum] -= 1
+            player2Tiles.append(chr(randNum+65))
     currentPlayer.grid(row = 2,column=0,columnspan=15)
     usedLetters.clear()
     currentPlayerTempScore = 0
     displayUpdate(-1,-1)
+    player1Turn,player2Turn = player2Turn,player1Turn
 
 #Saving the game data to gameData.json when closing the program.
 def windowClose():

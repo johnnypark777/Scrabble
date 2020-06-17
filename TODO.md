@@ -28,9 +28,12 @@
 	- Modify the letter erasing function(Only erasing what is allowed to erase). 
 		1. Assign Random letters(for now instead of making it as text input) when a player has less than 7 tiles. 
 		2. Correct Word Assignments (TODO List 2.2.1) 
-	- Correct Scoring Calculations (TODO List 2.1.1 -> 2.1) (** CURRENT **)  
+	- Simplify and increase the readability of the 'keyChar' function 
+	- Correct Scoring Calculations (TODO List 2.1.1 -> 2.1) (** CURRENT **)
 		1. Convert 'boardLetter' data from 1D to 2D. 
 
 	Bug Report
 	- User can replace the words that are not allowed (backspace is fine) 
+		- Current State: Fixed
+		- Fixed by returning the function when word is pressed but is not allowed to change the default word
 
