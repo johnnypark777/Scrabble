@@ -152,6 +152,25 @@ def displayUpdate(selectedX,selectedY):
     if isValidWord():
         confirmButton.grid()
         multiple = 1
+        ############################################
+        xList = [x['xCord'] for x in usedLetters]
+        curr_X = min(xList)
+        yList = [y['yCord'] for y in usedLetters]
+        curr_Y = min(yList)
+        #while(textbox[curr_X][curr_Y].letter != ''):
+        #    if(textbox[curr_X][curr_Y].color == 0):
+        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
+        #    elif(textbox[curr_X][curr_Y] == 1):
+        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]*2
+        #    elif(usedLetters[i]['multiplier'] == 2):
+        #        multiple *= 2
+        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
+        #    elif(usedLetters[i]['multiplier'] == 3):
+        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]*3
+        #    elif(usedLetters[i]['multiplier'] == 4):
+        #        multiple *= 3
+        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
+        ############################################
         for i in range(len(usedLetters)):
             if(usedLetters[i]['multiplier'] == 0):
                 currentPlayerTempScore += usedLetters[i]['score']

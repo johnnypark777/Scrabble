@@ -512,13 +512,13 @@
     0
   ],
   "player1Tiles": [
-    "S",
+    "M",
+    "U",
+    "F",
+    "J",
     "K",
     "R",
-    "J",
-    "F",
-    "M",
-    "U"
+    "S"
   ],
   "player1Turn": 1,
   "player2Tiles": [
