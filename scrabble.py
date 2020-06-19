@@ -154,37 +154,146 @@ def displayUpdate(selectedX,selectedY):
         multiple = 1
         ############################################
         xList = [x['xCord'] for x in usedLetters]
-        curr_X = min(xList)
         yList = [y['yCord'] for y in usedLetters]
-        curr_Y = min(yList)
-        #while(textbox[curr_X][curr_Y].letter != ''):
-        #    if(textbox[curr_X][curr_Y].color == 0):
-        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
-        #    elif(textbox[curr_X][curr_Y] == 1):
-        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]*2
+        xList.sort()
+        yList.sort()
+        pivot = list()
+        xIsPivot = False
+        yIsPivot = False
+        if len(xList) == len(set(xList)):
+            pivot = xList
+            xIsPivot = True
+            yIsPivot = False
+        if len(yList) == len(set(yList)):
+            pivot = yList
+            xIsPivot = False
+            yIsPivot = True
+        if xIsPivot:
+            if type(leftX(pivot[len(pivot)-1]-1, yList[len(pivot)-1], 0, 0)) is int and type(leftX(pivot[len(pivot)-1], yList[len(pivot)-1], 0, 0)) is int:
+                currentPlayerTempScore += leftX(pivot[0]-1, yList[0], 0, 0)
+            multiple = 1
+            nonMultiScore = 0
+            for i in range(len(pivot)):
+                currentPlayerTempScore += check_Scr(pivot[i], yList[i], 1, multiple)[0]
+                if type(upY(pivot[i], yList[i]-1, 0, 0)) is int and type(upY(pivot[i], yList[i], 0, 0)) is int:
+                    nonMultiScore += upY(pivot[i], yList[i]-1, 0, 0)
+                if type(downY(pivot[i], yList[i]+1, 0, 0)) is int and type(downY(pivot[i], yList[i], 0, 0)) is int:
+                    nonMultiScore += downY(pivot[i], yList[i]+1, 0, 0)
+                multiple *= check_Scr(pivot[i], yList[i], 1, multiple)[1]
+            if type(rightX(pivot[len(pivot)-1]+1, yList[len(pivot)-1], 0, 0)) is int and type(right(pivot[len(pivot)-1], yList[i], 0, 0)) is int:
+                nonMultiScore += rightX(pivot[len(pivot)-1], yList[len(pivot)-1], 0, 0)
+            currentPlayerTempScore *= multiple
+            currentPlayerTempScore += nonMultiScore
+        if yIsPivot:
+            if(type(upY(xList[0], pivot[0]-1, 0, 0)) is int):
+                currentPlayerTempScore += upY(xList[0], pivot[0]-1, 0, 0)
+            multiple = 1
+            nonMultiScore = 0
+            for i in range(len(pivot)):
+                currentPlayerTempScore += check_Scr(xList[i], pivot[i], 1, multiple)[0]
+                if type(leftX(xList[i]-1, pivot[i], 0, 0)) is int and type(leftX(xList[i], pivot[i], 0, 0)) is int:
+                    nonMultiScore += leftX(xList[i], pivot[i], 0, 0)
+                if type(rightX(xList[i]+1, pivot[i], 0, 0)) is int and type(rightX(xList[i], pivot[i], 0, 0)) is int:
+                    nonMultiScore += rightX(xList[i], pivot[i], 0, 0)
+                multiple *= check_Scr(xList[i], pivot[i], 1, multiple)[1]
+            if type(downY(xList[len(pivot)-1], pivot[len(pivot)-1]+1, 0, 0)) is int and type(downY(xList[len(pivot)-1], pivot[len(pivot)-1], 0, 0)) is int:
+                nonMultiScore += downY(xList[len(pivot)-1], pivot[len(pivot)-1], 0, 0)
+            currentPlayerTempScore *= multiple
+            currentPlayerTempScore += nonMultiScore
+        #while(curr_X > 0 and textbox[curr_Y][curr_X].letter != ''):
+        #    while(curr_Y > 0 and textbox[curr_Y][curr_X].letter != ''):
+        #        print("Letter: ", textbox[curr_Y][curr_X].letter)
+        #        if(textbox[curr_Y][curr_X].color == 0):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 1):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*2
+        #        elif(textbox[curr_Y][curr_X].color == 2):
+        #            multiple *= 2
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 3):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*3
+        #        elif(textbox[curr_Y][curr_X].color == 4):
+        #            multiple *= 3
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #    currentPlayerTempScore *= multiple
+        #    multiple = 1
+        #        curr_Y -= 1
+        #    curr_Y = orig_Y+1
+        #    while(curr_Y < 15 and textbox[curr_Y][curr_X].letter != ''):
+        #        print("Letter: ", textbox[curr_Y][curr_X].letter)
+        #        if(textbox[curr_Y][curr_X].color == 0):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 1):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*2
+        #        elif(textbox[curr_Y][curr_X].color == 2):
+        #            multiple *= 2
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 3):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*3
+        #        elif(textbox[curr_Y][curr_X].color == 4):
+        #            multiple *= 3
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        curr_Y += 1
+        #        currentPlayerTempScore *= multiple
+        #        multiple = 1
+        #    curr_X -= 1
+        #    curr_Y = orig_Y
+        #curr_X = orig_X+1
+        #curr_Y = orig_Y
+        #while(curr_X < 15 and textbox[curr_Y][curr_X].letter != ''):
+        #    while(curr_Y > 0 and textbox[curr_Y][curr_X].letter != ''):
+        #        print("Letter: ", textbox[curr_Y][curr_X].letter)
+        #        if(textbox[curr_Y][curr_X].color == 0):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 1):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*2
+        #        elif(textbox[curr_Y][curr_X].color == 2):
+        #            multiple *= 2
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 3):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*3
+        #        elif(textbox[curr_Y][curr_X].color == 4):
+        #            multiple *= 3
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        curr_Y -= 1
+        #        currentPlayerTempScore *= multiple
+        #        multiple = 1
+        #    curr_Y = orig_Y+1
+        #    while(curr_Y < 15 and textbox[curr_Y][curr_X].letter != ''):
+        #        print("Letter: ", textbox[curr_Y][curr_X].letter)
+        #        if(textbox[curr_X][curr_Y].color == 0):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 1):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*2
+        #        elif(textbox[curr_Y][curr_X].color == 2):
+        #            multiple *= 2
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        elif(textbox[curr_Y][curr_X].color == 3):
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]*3
+        #        elif(textbox[curr_Y][curr_X].color == 4):
+        #            multiple *= 3
+        #            currentPlayerTempScore += letterScores[ord(textbox[curr_Y][curr_X].letter)-65]
+        #        curr_Y += 1
+        #        currentPlayerTempScore *= multiple
+        #        multiple = 1
+        #    curr_Y = orig_Y
+        #    curr_X += 1
+        ############################################
+        #for i in range(len(usedLetters)):
+        #    if(usedLetters[i]['multiplier'] == 0):
+        #        currentPlayerTempScore += usedLetters[i]['score']
+        #    elif(usedLetters[i]['multiplier'] == 1):
+        #        currentPlayerTempScore += usedLetters[i]['score']*2
         #    elif(usedLetters[i]['multiplier'] == 2):
         #        multiple *= 2
-        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
+        #        currentPlayerTempScore += usedLetters[i]['score']
         #    elif(usedLetters[i]['multiplier'] == 3):
-        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]*3
+        #        currentPlayerTempScore += usedLetters[i]['score']*3
         #    elif(usedLetters[i]['multiplier'] == 4):
         #        multiple *= 3
-        #        currentPlayerTempScore += letterScores[textbox[curr_X][curr_Y].letter]
+        #        currentPlayerTempScore += usedLetters[i]['score']
+        #currentPlayerTempScore *= multiple
         ############################################
-        for i in range(len(usedLetters)):
-            if(usedLetters[i]['multiplier'] == 0):
-                currentPlayerTempScore += usedLetters[i]['score']
-            elif(usedLetters[i]['multiplier'] == 1):
-                currentPlayerTempScore += usedLetters[i]['score']*2
-            elif(usedLetters[i]['multiplier'] == 2):
-                multiple *= 2
-                currentPlayerTempScore += usedLetters[i]['score']
-            elif(usedLetters[i]['multiplier'] == 3):
-                currentPlayerTempScore += usedLetters[i]['score']*3
-            elif(usedLetters[i]['multiplier'] == 4):
-                multiple *= 3
-                currentPlayerTempScore += usedLetters[i]['score']
-        currentPlayerTempScore *= multiple
         if(len(usedLetters) is 7):
             currentPlayerTempScore += 50
 
@@ -195,6 +304,50 @@ def displayUpdate(selectedX,selectedY):
         Player2Label = Label(root,text="Player 2: "+str(currentPlayerTempScore+scorePlayer2),width=15,font=("Courier",11))
         Player2Label.grid(row = 1,column=7,columnspan=8)
 
+def leftX(x,y,score,const):
+    if x >= 0 and textbox[y][x].letter.isalpha():
+        score += check_Scr(x,y,const,0)[0]
+        leftX(x-1,y,score,const)
+        return score
+def rightX(x,y,score,const):
+    if x <= 15 and textbox[y][x].letter.isalpha():
+        score += check_Scr(x,y,const,0)[0]
+        rightX(x+1,y,score,const)
+        return score
+def upY(x,y,score,const):
+    if y >= 0 and textbox[y][x].letter.isalpha():
+        score += check_Scr(x,y,const,0)[0]
+        upY(x,y-1,score,const)
+        return score
+def downY(x,y,score,const):
+    if y <= 15 and textbox[y][x].letter.isalpha():
+        score += check_Scr(x,y,const,0)[0]
+        downY(x,y+1,score,const)
+        return score
+def check_Scr(x,y,const,multiple):
+    score = 0
+    if(textbox[y][x].color == 0):
+        score += letterScores[ord(textbox[y][x].letter)-65]
+    elif(textbox[y][x].color == 1):
+        if const:
+            score += letterScores[ord(textbox[y][x].letter)-65]*2
+        else:
+            score += letterScores[ord(textbox[y][x].letter)-65]
+    elif(textbox[y][x].color == 2):
+        if const:
+            multiple *= 2
+        score += letterScores[ord(textbox[y][x].letter)-65]
+    elif(textbox[y][x].color == 3):
+        if const:
+            score += letterScores[ord(textbox[y][x].letter)-65]*3
+        else:
+            score += letterScores[ord(textbox[y][x].letter)-65]
+    elif(textbox[y][x].color == 4):
+        if const:
+            multiple *= 3
+        score += letterScores[ord(textbox[y][x].letter)-65]
+    return score, multiple
+
 def isValidWord():
     if(len(usedLetters) is not 0):
         xList = [x['xCord'] for x in usedLetters]
@@ -203,7 +356,6 @@ def isValidWord():
         yList = [y['yCord'] for y in usedLetters]
         minY = min(yList)
         maxY =  max(yList)
-        print(minX,minY)
         if(minX != maxX and minY != maxY or not adjacentWord(minX,minY)):
             currentPlayerTempScore = 0
             return False
@@ -238,11 +390,11 @@ def floodFill(board,x,y):
 
 def turnPassed():
     global player1Turn,player2Turn,currentPlayerTempScore,scorePlayer1,scorePlayer2
-    randNum = randint(0,25)
     if(player1Turn):
         scorePlayer1 += currentPlayerTempScore
         currentPlayer = Label(root,text="Current Turn: Player 2",font=("Courier",11))
         while len(player1Tiles) < 7:
+            randNum = randint(0,25)
             while letterDistribution[randNum] is 0:
                 randNum = randint(0,25)
             letterDistribution[randNum] -= 1
@@ -251,6 +403,7 @@ def turnPassed():
         scorePlayer2 += currentPlayerTempScore
         currentPlayer = Label(root,text="Current Turn: Player 1",font=("Courier",11))
         while len(player2Tiles) < 7:
+            randNum = randint(0,25)
             while letterDistribution[randNum] is 0:
                 randNum = randint(0,25)
             letterDistribution[randNum] -= 1
@@ -258,8 +411,8 @@ def turnPassed():
     currentPlayer.grid(row = 2,column=0,columnspan=15)
     usedLetters.clear()
     currentPlayerTempScore = 0
-    displayUpdate(-1,-1)
     player1Turn,player2Turn = player2Turn,player1Turn
+    displayUpdate(-1,-1)
 
 #Saving the game data to gameData.json when closing the program.
 def windowClose():

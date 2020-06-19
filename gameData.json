@@ -354,10 +354,10 @@
       "",
       "",
       "",
-      "Z",
-      "E",
-      "D",
-      "T",
+      "",
+      "",
+      "",
+      "",
       "",
       "",
       "",
@@ -372,11 +372,11 @@
       "",
       "",
       "",
-      "X",
-      "V",
-      "W",
-      "V",
-      "Q",
+      "",
+      "",
+      "",
+      "",
+      "",
       "",
       ""
     ],
@@ -514,11 +514,11 @@
   "player1Tiles": [
     "M",
     "U",
-    "F",
     "J",
     "K",
     "R",
-    "S"
+    "S",
+    "F"
   ],
   "player1Turn": 1,
   "player2Tiles": [
@@ -531,7 +531,7 @@
     "G"
   ],
   "player2Turn": 0,
-  "scorePlayer1": 28,
-  "scorePlayer2": 48,
+  "scorePlayer1": 0,
+  "scorePlayer2": 0,
   "usedLetters": []
 }
