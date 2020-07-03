@@ -169,37 +169,53 @@ def displayUpdate(selectedX,selectedY):
             xIsPivot = False
             yIsPivot = True
         if xIsPivot:
-            if type(leftX(pivot[len(pivot)-1]-1, yList[len(pivot)-1], 0, 0)) is int and type(leftX(pivot[len(pivot)-1], yList[len(pivot)-1], 0, 0)) is int:
-                currentPlayerTempScore += leftX(pivot[0]-1, yList[0], 0, 0)
             multiple = 1
             nonMultiScore = 0
-            for i in range(len(pivot)):
-                currentPlayerTempScore += check_Scr(pivot[i], yList[i], 1, multiple)[0]
-                if type(upY(pivot[i], yList[i]-1, 0, 0)) is int and type(upY(pivot[i], yList[i], 0, 0)) is int:
-                    nonMultiScore += upY(pivot[i], yList[i]-1, 0, 0)
-                if type(downY(pivot[i], yList[i]+1, 0, 0)) is int and type(downY(pivot[i], yList[i], 0, 0)) is int:
-                    nonMultiScore += downY(pivot[i], yList[i]+1, 0, 0)
-                multiple *= check_Scr(pivot[i], yList[i], 1, multiple)[1]
-            if type(rightX(pivot[len(pivot)-1]+1, yList[len(pivot)-1], 0, 0)) is int and type(right(pivot[len(pivot)-1], yList[i], 0, 0)) is int:
-                nonMultiScore += rightX(pivot[len(pivot)-1], yList[len(pivot)-1], 0, 0)
+            if type(leftX(pivot[0]-1, yList[0], 0, 0)) is int and type(leftX(pivot[0], yList[0], 0, 0)) is int:
+                nonMultiScore += leftX(pivot[0]-1, yList[0], 0, 0)
+            xRange = max(pivot) - min(pivot) + 1
+            for i in range(xRange):
+                currentPlayerTempScore += check_Scr(pivot[0]+i, yList[0], 1, multiple)[0]
+                if type(upY(pivot[0]+i, yList[0]-1, 0, 0)) is int:
+                    if len(usedLetters) > 1:
+                        nonMultiScore += check_Scr(pivot[0]+i, yList[0], 0, 0)[0]
+                    nonMultiScore += upY(pivot[0]+i, yList[0]-1, 0, 0)
+                elif type(downY(pivot[0]+i, yList[0]+1, 0, 0)) is int:
+                    if len(usedLetters) > 1:
+                        nonMultiScore += check_Scr(pivot[0]+i, yList[0], 0, 0)[0]
+                    nonMultiScore += downY(pivot[0]+i, yList[0]+1, 0, 0)
+                multiple = check_Scr(pivot[0]+i, yList[0], 1, multiple)[1]
+            if type(rightX(max(pivot)+1, yList[0], 0, 0)) is int and type(rightX(max(pivot), yList[0], 0, 0)) is int:
+                nonMultiScore += rightX(max(pivot)+1, yList[0], 0, 0)
             currentPlayerTempScore *= multiple
             currentPlayerTempScore += nonMultiScore
         if yIsPivot:
-            if(type(upY(xList[0], pivot[0]-1, 0, 0)) is int):
-                currentPlayerTempScore += upY(xList[0], pivot[0]-1, 0, 0)
-            multiple = 1
             nonMultiScore = 0
-            for i in range(len(pivot)):
-                currentPlayerTempScore += check_Scr(xList[i], pivot[i], 1, multiple)[0]
-                if type(leftX(xList[i]-1, pivot[i], 0, 0)) is int and type(leftX(xList[i], pivot[i], 0, 0)) is int:
-                    nonMultiScore += leftX(xList[i], pivot[i], 0, 0)
-                if type(rightX(xList[i]+1, pivot[i], 0, 0)) is int and type(rightX(xList[i], pivot[i], 0, 0)) is int:
-                    nonMultiScore += rightX(xList[i], pivot[i], 0, 0)
-                multiple *= check_Scr(xList[i], pivot[i], 1, multiple)[1]
-            if type(downY(xList[len(pivot)-1], pivot[len(pivot)-1]+1, 0, 0)) is int and type(downY(xList[len(pivot)-1], pivot[len(pivot)-1], 0, 0)) is int:
-                nonMultiScore += downY(xList[len(pivot)-1], pivot[len(pivot)-1], 0, 0)
+            multiple = 1
+            if type(upY(xList[0], pivot[0]-1, 0, 0)) is int and type(upY(xList[0], pivot[0], 0, 0)) is int:
+                nonMultiScore += upY(xList[0], pivot[0]-1, 0, 0)
+            yRange = max(pivot) - min(pivot) + 1
+            for i in range(yRange):
+                currentPlayerTempScore += check_Scr(xList[0], pivot[0]+i, 1, multiple)[0]
+                if type(leftX(xList[0]-1, pivot[0]+i, 0, 0)) is int and type(leftX(xList[0], pivot[0]+i, 0, 0)) is int:
+                    print("length",len(usedLetters))
+                    ###This is printing as the number of yRange. I think the type is int is not working as expected.
+                    if len(usedLetters) > 1:
+                        nonMultiScore += check_Scr(xList[0], pivot[0]+i, 1, multiple)[0]
+                    nonMultiScore += leftX(xList[0]-1, pivot[0]+i, 0, 0)
+                elif type(rightX(xList[0]+1, pivot[0]+i, 0, 0)) is int:
+                    if len(usedLetters) > 1:
+                        nonMultiScore += check_Scr(xList[0], pivot[0]+i, 1, multiple)[0]
+                    nonMultiScore += rightX(xList[0]+1, pivot[0]+i, 0, 0)
+                multiple = check_Scr(xList[0], pivot[0]+i, 1, multiple)[1]
+            if type(downY(xList[0], max(pivot)+1, 0, 0)) is int and type(downY(xList[0], max(pivot), 0, 0)) is int:
+                nonMultiScore += downY(xList[0], max(pivot)+1, 0, 0)
+            print("currentPlayerTempScore: ",currentPlayerTempScore)
+            print("nonMultiScore: ", nonMultiScore)
+            print("multiple: ", multiple)
             currentPlayerTempScore *= multiple
             currentPlayerTempScore += nonMultiScore
+            print("Final: ",currentPlayerTempScore)
         #while(curr_X > 0 and textbox[curr_Y][curr_X].letter != ''):
         #    while(curr_Y > 0 and textbox[curr_Y][curr_X].letter != ''):
         #        print("Letter: ", textbox[curr_Y][curr_X].letter)
@@ -307,22 +323,26 @@ def displayUpdate(selectedX,selectedY):
 def leftX(x,y,score,const):
     if x >= 0 and textbox[y][x].letter.isalpha():
         score += check_Scr(x,y,const,0)[0]
-        leftX(x-1,y,score,const)
+        return leftX(x-1,y,score,const)
+    else:
         return score
 def rightX(x,y,score,const):
-    if x <= 15 and textbox[y][x].letter.isalpha():
+    if x < 15 and textbox[y][x].letter.isalpha():
         score += check_Scr(x,y,const,0)[0]
-        rightX(x+1,y,score,const)
+        return rightX(x+1,y,score,const)
+    else:
         return score
 def upY(x,y,score,const):
     if y >= 0 and textbox[y][x].letter.isalpha():
         score += check_Scr(x,y,const,0)[0]
-        upY(x,y-1,score,const)
+        return upY(x,y-1,score,const)
+    else:
         return score
 def downY(x,y,score,const):
-    if y <= 15 and textbox[y][x].letter.isalpha():
+    if y < 15 and textbox[y][x].letter.isalpha():
         score += check_Scr(x,y,const,0)[0]
-        downY(x,y+1,score,const)
+        return downY(x,y+1,score,const)
+    else:
         return score
 def check_Scr(x,y,const,multiple):
     score = 0
