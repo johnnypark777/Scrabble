@@ -3,9 +3,10 @@ from tkinter import messagebox
 from random import randint
 from functools import partial
 import json
-import string
 
+#Why does it crash when selectedX 7, selectedY 7
 selectedX,selectedY = -1,-1
+
 #Importing Saved JSON Data
 letterScores = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
 savedData = json.load(open("gameData.json","r"))
@@ -45,7 +46,6 @@ def buttonSelect(i,j):
 #Function when key is pressed after the button is selected.
 def keyChar(event):
     global selectedY,selectedX,usedLetter,player1Turn,player2Turn,player1Tiles,player2Tiles
-    #Refactor List
     if(event.char.isalpha()):
         newLetter = {}
         newLetter['letter'] = event.char.upper()
@@ -57,6 +57,8 @@ def keyChar(event):
         if(textbox[selectedY][selectedX].letter is not ''):
             if not(any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters)):
                 return None
+
+
         ##If is player 1's turn and is on the player's word list
         if(player1Turn and event.char.upper() in player1Tiles):
             player1Tiles.remove(event.char.upper())
@@ -70,6 +72,7 @@ def keyChar(event):
         else:
             return None
         ##If a valid move was played, add the word to the 'usedLetters' array
+        ############################################Explaining Ended Here##########################
         usedLetters.append(newLetter)
         usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
         textbox[selectedY][selectedX].letter = event.char.upper()
@@ -152,7 +155,6 @@ def displayUpdate(selectedX,selectedY):
     if isValidWord():
         confirmButton.grid()
         multiple = 1
-        ############################################
         xList = [x['xCord'] for x in usedLetters]
         yList = [y['yCord'] for y in usedLetters]
         xList.sort()
@@ -172,58 +174,81 @@ def displayUpdate(selectedX,selectedY):
             multiple = 1
             nonMultiScore = 0
             if leftX(pivot[0]-1, yList[0], 0, 0) != 0:
-                nonMultiScore += leftX(pivot[0]-1, yList[0], 0, 0)
+                currentPlayerTempScore = leftX(pivot[0]-1, yList[0], 0, 0)
             tempX_1 = pivot[0]
             for i in range(len(pivot)):
+                currentPlayerTempScore += check_Scr(pivot[i], yList[0], 1, multiple)[0]
+                multiple = check_Scr(pivot[i], yList[0], 1, multiple)[1]
                 if i != 0:
                     tempX_2 = pivot[i]
                     while tempX_1 + 1 != tempX_2:
-                        nonMultiScore += check_Scr(tempX_1+1,yList[0],0,0)[0]
+                        currentPlayerTempScore += check_Scr(tempX_1+1,yList[0],0,0)[0]
                         tempX_1 += 1
                     tempX_1 = tempX_2
-                currentPlayerTempScore += check_Scr(pivot[i], yList[0], 1, multiple)[0]
                 if upY(pivot[i], yList[0]-1, 0, 0) != 0:
+                    tempScore = 0
                     if len(usedLetters) > 1:
-                        nonMultiScore += check_Scr(pivot[i], yList[0], 0, 0)[0]
-                    nonMultiScore += upY(pivot[0]+i, yList[0]-1, 0, 0)
+                        tempScore += check_Scr(pivot[i], yList[0], 0, 0)[0]
+                    tempScore += upY(pivot[i], yList[0]-1, 0, 0)
+                    if check_Scr(pivot[i], yList[0], 1, 1)[1] != 1:
+                        tempScore *= check_Scr(pivot[i], yList[0], 1, 1)[1]
+                    nonMultiScore += tempScore
                 elif downY(pivot[i], yList[0]+1, 0, 0) != 0:
+                    tempScore = 0
                     if len(usedLetters) > 1:
-                        nonMultiScore += check_Scr(pivot[i], yList[0], 0, 0)[0]
-                    nonMultiScore += downY(pivot[i], yList[0]+1, 0, 0)
-                multiple = check_Scr(pivot[i], yList[0], 1, multiple)[1]
-            if type(rightX(max(pivot)+1, yList[0], 0, 0)) is int and type(rightX(max(pivot), yList[0], 0, 0)) is int:
-                nonMultiScore += rightX(max(pivot)+1, yList[0], 0, 0)
+                        tempScore += check_Scr(pivot[i], yList[0], 0, 0)[0]
+                    tempScore += downY(pivot[i], yList[0]+1, 0, 0)
+                    if check_Scr(pivot[i], yList[0], 1, 1)[1] != 1:
+                        tempScore *= check_Scr(pivot[i], yList[0], 1, 1)[1]
+                    nonMultiScore += tempScore
+            if rightX(max(pivot)+1, yList[0], 0, 0) != 0:
+                currentPlayerTempScore = rightX(max(pivot)+1, yList[0], 0, 0)
+            print("before multiple and nonMultiScore", currentPlayerTempScore)
+            print("multiple", multiple)
             currentPlayerTempScore *= multiple
+            print("before nonMultiScore", currentPlayerTempScore)
+            print("nonMultiScore", nonMultiScore)
             currentPlayerTempScore += nonMultiScore
+            print("final", currentPlayerTempScore)
         if yIsPivot:
             nonMultiScore = 0
             multiple = 1
             tempY_1 = pivot[0]
+            if upY(xList[0], pivot[0]-1, 0, 0) != 0:
+                currentPlayerTempScore = upY(xList[0], pivot[0]-1, 0, 0)
             for i in range(len(pivot)):
+                currentPlayerTempScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
+                print("Q check",currentPlayerTempScore)
+                multiple = check_Scr(xList[0], pivot[i], 1, multiple)[1]
                 if i != 0:
                     tempY_2 = pivot[i]
                     while tempY_1 + 1 != tempY_2:
-                        nonMultiScore += check_Scr(xList[0],tempY_1+1,0,0)[0]
+                        currentPlayerTempScore += check_Scr(xList[0],tempY_1+1,1,1)[0]
                         tempY_1 += 1
                     tempY_1 = tempY_2
-            if upY(xList[0], pivot[0]-1, 0, 0) != 0:
-                nonMultiScore += upY(xList[0], pivot[0]-1, 0, 0)
-            yRange = max(pivot) - min(pivot) + 1
-            for i in range(yRange):
-                currentPlayerTempScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
-                if leftX(xList[0]-1, pivot[0]+i, 0, 0) != 0:
+                if leftX(xList[0]-1, pivot[i], 0, 0) != 0:
+                    tempScore = 0
                     if len(usedLetters) > 1:
-                        nonMultiScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
-                    nonMultiScore += leftX(xList[0]-1, pivot[i], 0, 0)
-                elif rightX(xList[0]+1, pivot[0]+i, 0, 0) != 0:
+                        tempScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
+                    tempScore += leftX(xList[0]-1, pivot[i], 0, 0)
+                    if check_Scr(xList[0], pivot[i], 1, 1)[1] != 1:
+                        tempScore *= check_Scr(xList[0], pivot[i], 1, 1)[1]
+                    nonMultiScore += tempScore
+                elif rightX(xList[0]+1, pivot[i], 0, 0) != 0:
+                    tempScore = 0
                     if len(usedLetters) > 1:
-                        nonMultiScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
-                    nonMultiScore += rightX(xList[0]+1, pivot[i], 0, 0)
-                multiple = check_Scr(xList[0], pivot[i], 1, multiple)[1]
-            if type(downY(xList[0], max(pivot)+1, 0, 0)) is int and type(downY(xList[0], max(pivot), 0, 0)) is int:
-                nonMultiScore += downY(xList[0], max(pivot)+1, 0, 0)
+                        tempScore += check_Scr(xList[0], pivot[i], 1, multiple)[0]
+                    tempScore += rightX(xList[0]+1, pivot[i], 0, 0)
+                    if check_Scr(xList[0], pivot[i], 1, 1)[1] != 1:
+                        tempScore *= check_Scr(xList[0], pivot[i], 1, 1)[1]
+                    nonMultiScore += tempScore
+            if downY(xList[0], max(pivot)+1, 0, 0) != 0:
+                currentPlayerTempScore += downY(xList[0], max(pivot)+1, 0, 0)
+            print("before multiple and nonMultiScore", currentPlayerTempScore)
+            print("multiple", multiple)
             currentPlayerTempScore *= multiple
             currentPlayerTempScore += nonMultiScore
+            print("Y final", currentPlayerTempScore)
         if(len(usedLetters) is 7):
             currentPlayerTempScore += 50
 
