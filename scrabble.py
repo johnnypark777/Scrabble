@@ -34,7 +34,7 @@ root.resizable(False,False)
 #Function that runs when a textbox(button) is selected.
 def buttonSelect(i,j):
     global selectedX,selectedY
-    if (selectedX != -1):
+    if selectedX != -1:
         textbox[selectedY][selectedX].config(highlightbackground="black",relief=FLAT)
         textbox[selectedY][selectedX].unbind('<Button-1>')
     selectedX,selectedY = i,j
@@ -46,7 +46,7 @@ def buttonSelect(i,j):
 #Function when key is pressed after the button is selected.
 def keyChar(event):
     global selectedY,selectedX,usedLetter,player1Turn,player2Turn,player1Tiles,player2Tiles
-    if(event.char.isalpha()):
+    if event.char.isalpha():
         newLetter = {}
         newLetter['letter'] = event.char.upper()
         newLetter['multiplier'] = textbox[selectedY][selectedX].color
@@ -57,8 +57,6 @@ def keyChar(event):
         if(textbox[selectedY][selectedX].letter is not ''):
             if not(any(d['xCord'] is selectedX for d in usedLetters) and any(d['yCord'] is selectedY for d in usedLetters)):
                 return None
-
-
         ##If is player 1's turn and is on the player's word list
         if(player1Turn and event.char.upper() in player1Tiles):
             player1Tiles.remove(event.char.upper())
@@ -74,6 +72,7 @@ def keyChar(event):
         ##If a valid move was played, add the word to the 'usedLetters' array
         ############################################Explaining Ended Here##########################
         usedLetters.append(newLetter)
+        ##Remove from usedLetters if the letter pre-exists in the tile
         usedLetters[:] = [d for d in usedLetters if d.get('letter') != textbox[selectedY][selectedX].letter]
         textbox[selectedY][selectedX].letter = event.char.upper()
         displayUpdate(selectedX,selectedY)
