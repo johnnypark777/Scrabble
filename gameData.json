@@ -393,9 +393,9 @@
       "Y",
       "",
       "",
-      "",
-      "",
-      ""
+      "V",
+      "O",
+      "O"
     ],
     [
       "",
@@ -484,7 +484,7 @@
     ]
   ],
   "letterDistribution": [
-    8,
+    7,
     1,
     1,
     0,
@@ -502,36 +502,36 @@
     0,
     0,
     3,
-    4,
+    3,
     0,
     3,
     0,
-    1,
+    0,
     0,
     0,
     0
   ],
   "player1Tiles": [
-    "V",
-    "O",
-    "O",
     "R",
     "T",
     "C",
-    "F"
-  ],
-  "player1Turn": 1,
-  "player2Tiles": [
-    "V",
-    "G",
-    "G",
-    "I",
-    "R",
-    "N",
+    "F",
+    "S",
+    "A",
     "W"
   ],
-  "player2Turn": 0,
-  "scorePlayer1": 91,
+  "player1Turn": 0,
+  "player2Tiles": [
+    "G",
+    "N",
+    "R",
+    "V",
+    "W",
+    "G",
+    "I"
+  ],
+  "player2Turn": 1,
+  "scorePlayer1": 104,
   "scorePlayer2": 120,
   "usedLetters": []
 }
