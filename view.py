@@ -3,12 +3,14 @@ from tkinter import ttk
 
 class View(tk.Tk):
     PAD = 15
+    PLAYER_NUM = 2
     def __init__(self,controller):
         super().__init__()
         self.controller = controller
         self.value_var = tk.StringVar()
         self.title('Scrabble')
         self._make_main_frame()
+        self._make_labels()
         self._make_buttons()
 
     def main(self):
@@ -35,17 +37,34 @@ class View(tk.Tk):
         self._configure_button(frm,'Confirm')
 
     def _configure_button(self,frm,txt):
-        btn = ttk.Button(frm, text=txt, command=(
+        btn = tk.Button(frm, text=txt,width=6,height=1,command=(
             lambda button=txt:self.controller.on_button_click(txt)
             )
         )
+
+        if txt == 'Confirm':
+            btn.pack(side='left',padx=10,pady=10)
+            return
+
+        btn.config(bg="green",width=1, height=1, highlightbackground="black",
+borderwidth=0,activebackground="green")
         btn.pack(side='left')
 
     #Incomplete Methods
-    #def _make_labels(self):
-    #    player_label = ttk.Label()
-
-
+    def _make_labels(self):
+        ### Change by player number
+        outer_frm= ttk.Frame(self.main_frm)
+        outer_frm.pack(fill='both')
+        player_label = ttk.Label(outer_frm,text="Player 1:")
+        player_label.pack(side='left',padx=50,pady=10)
+        player_label = ttk.Label(outer_frm,text="Player 2:")
+        player_label.pack(side='right',padx=50,pady=10)
+        #PLAYER SCORE
+        #
+        #
+        #
+        #
+        #
 
     #Archived methods
     #def _start_frame(self):

@@ -250,7 +250,6 @@ def displayUpdate(selectedX,selectedY):
             print("Y final", currentPlayerTempScore)
         if(len(usedLetters) is 7):
             currentPlayerTempScore += 50
-
     if(player1Turn is 1):
         Player1Label = Label(root,text="Player 1: "+str(currentPlayerTempScore+scorePlayer1),width=15,font=("Courier",11))
         Player1Label.grid(row = 1,column=0,columnspan=7)
