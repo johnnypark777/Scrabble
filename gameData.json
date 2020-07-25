@@ -404,7 +404,7 @@
       "",
       "",
       "",
-      "",
+      "G",
       "",
       "",
       "",
@@ -496,7 +496,7 @@
     0,
     1,
     3,
-    1,
+    0,
     4,
     4,
     0,
@@ -520,18 +520,18 @@
     "A",
     "W"
   ],
-  "player1Turn": 0,
+  "player1Turn": 1,
   "player2Tiles": [
-    "G",
     "N",
     "R",
     "V",
     "W",
+    "I",
     "G",
-    "I"
+    "M"
   ],
-  "player2Turn": 1,
+  "player2Turn": 0,
   "scorePlayer1": 104,
-  "scorePlayer2": 120,
+  "scorePlayer2": 124,
   "usedLetters": []
 }
