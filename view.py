@@ -37,10 +37,34 @@ class View(tk.Tk):
 
     def tile_selected(self,tile):
         if self.selected:
-            self.selected_tile.config(highlightbackground="black")
+            self.tile.config(highlightbackground="black")
         self.selected = True
-        self.selected_tile = tile
-        tile.config(highlightbackground="white")
+        self.tile = tile
+        tile.config(highlightcolor="white")
+        tile.focus_set()
+        tile.bind("<Key>",self.controller.on_key_press)
+
+    def key_pressed(self,key,char):
+        if key == 1:
+            self.tile.config(
+                bg="beige",fg="black",activeforeground="black",activebackground="beige",text=char
+            )
+        elif key == 2:
+            i = 0
+            j = 0
+            if self.tile.winfo_name()[-1] != 'n':
+                i = int(self.tile.winfo_name()[-1])-1
+            if self.tile.winfo_parent()[-1] != 'e':
+                j = int(self.tile.winfo_parent()[-1])-1
+            if i == 7 and j == 7:
+                self._set_tile_color(self.tile,'★')
+            else:
+                self._set_tile_color(self.tile,str(self.board_color[j][i]))
+            name = self.tile.winfo_name()
+            print(name)
+        #elif key == 3:
+
+
     ##Private methods
 
     def _make_main_frame(self):
@@ -49,28 +73,26 @@ class View(tk.Tk):
 
     ##Making Tiles of Scrabble
     def _make_buttons(self):
-        outer_frm= ttk.Frame(self.main_frm,name='outer')
+        outer_frm= ttk.Frame(self.main_frm)
         outer_frm.pack()
-        frm = ttk.Frame(outer_frm,name='0')
+        frm = ttk.Frame(outer_frm)
         frm.pack()
         for i in range(self.PAD):
             for j in range(self.PAD):
                 x_axis = chr(97+j)
                 y_axis = i+1
                 if j == 7 and i == 7:
-                    self._configure_button(frm,'★',(x_axis+str(y_axis)))
+                    self._configure_button(frm,'★')
                 else:
-                    self._configure_button(frm,str(self.board_color[j][i]),(x_axis+str(y_axis)))
-            frm = ttk.Frame(outer_frm,name=str(y_axis))
+                    self._configure_button(frm,str(self.board_color[j][i]))
+            frm = ttk.Frame(outer_frm)
             frm.pack()
-        self._configure_button(self.main_frm,'Confirm','confirm')
+        self._configure_button(self.main_frm,'Confirm')
 
     ##A helper function for the _make_buttons function, used to add onclick feature to the buttons
-    def _configure_button(self,frm,txt,name):
-        btn = tk.Button(frm, text=txt,width=6,height=1,name=name,command=(
-            lambda button=name:self.controller.on_button_click(name)
-            )
-        )
+    def _configure_button(self,frm,txt):
+        btn = tk.Button(frm,text=txt,width=6,height=1)
+        btn.bind("<1>",self.controller.on_button_click)
         if txt == 'Confirm':
             btn.pack(side='bottom',padx=10)
             return
