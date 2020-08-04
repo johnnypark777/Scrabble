@@ -22,15 +22,17 @@ class Controller:
     def on_key_press(self,event):
         char = event.keysym.upper()
         key_type = self.model.key_pressed(char,self.view.letters[self.view.turn.get()-1],self.view.tile)
-        if key_type == 1:
-            self.view.key_pressed(key_type,char,'')
+        key = key_type[0]
+        if key_type[0] is None:
             return
-        if key_type[0] == 2 or 3:
+        if key in (1,2,3,6,7):
             new_tile = self.view.tile.master.nametowidget(key_type[1])
-            if key_type[0] == 2:
-                self.view.key_pressed(key_type[0],char,new_tile)
-            else:
-                self.view.key_pressed(key_type[0],char,new_tile,i=key_type[2],j=key_type[3])
+            if key == 3:
+                return self.view.key_pressed(key,char,new_tile,i=key_type[2],j=key_type[3])
+        elif key in (4,5):
+            new_tile = self.view.main_frm.nametowidget(key_type[1])
+        self.view.key_pressed(key,char,new_tile)
+
 
 
 if __name__ == '__main__':

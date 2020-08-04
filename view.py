@@ -10,13 +10,18 @@ class View(tk.Tk):
     PLAYER_NUM = 3
     LETTER_NUM = 7
     LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
+    ## TODO
+    LETTER_FREQ = []
+    ##
     def __init__(self,controller):
         super().__init__()
         self.selected = False
         self.controller = controller
         self.value_var = tk.StringVar()
         self.scores = self.PLAYER_NUM*[tk.IntVar()]
+        ## TODO
         self.letters = [choices(ascii_uppercase,k=self.LETTER_NUM) for _ in range(self.PLAYER_NUM)]
+        ##
         self.turn = tk.IntVar()
         self.turn.set(1)
         self._load_file()
@@ -45,18 +50,18 @@ class View(tk.Tk):
         tile.bind("<Key>",self.controller.on_key_press)
 
     def key_pressed(self,key,char,new_tile,**options):
+        print(key)
         if key == 1:
             self.tile.config(
                 bg="beige",fg="black",activeforeground="black",activebackground="beige",text=char
             )
-        elif key == 2 or 3:
+        elif key in (2,3):
             #Erasing the Letter
             if key == 2:
                 self._set_tile_color(self.tile,'★')
             else:
                 self._set_tile_color(self.tile,str(self.board_color[options["j"]][options["i"]]))
-            self.tile_selected(new_tile)
-        #elif key == 3:
+        self.tile_selected(new_tile)
 
     ##Private methods
 
@@ -148,7 +153,6 @@ class View(tk.Tk):
         savedData = json.load(open("game_data.json","r"))
         self.board_color = savedData["board_color"]
     #Incomplete methods
-
     #Archived methods
     #def _start_frame(self):
     #    self.strt_frm = ttk.Frame(self)
