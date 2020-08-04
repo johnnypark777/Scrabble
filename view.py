@@ -44,26 +44,19 @@ class View(tk.Tk):
         tile.focus_set()
         tile.bind("<Key>",self.controller.on_key_press)
 
-    def key_pressed(self,key,char):
+    def key_pressed(self,key,char,new_tile,**options):
         if key == 1:
             self.tile.config(
                 bg="beige",fg="black",activeforeground="black",activebackground="beige",text=char
             )
-        elif key == 2:
-            i = 0
-            j = 0
-            if self.tile.winfo_name()[-1] != 'n':
-                i = int(self.tile.winfo_name()[-1])-1
-            if self.tile.winfo_parent()[-1] != 'e':
-                j = int(self.tile.winfo_parent()[-1])-1
-            if i == 7 and j == 7:
+        elif key == 2 or 3:
+            #Erasing the Letter
+            if key == 2:
                 self._set_tile_color(self.tile,'★')
             else:
-                self._set_tile_color(self.tile,str(self.board_color[j][i]))
-            name = self.tile.winfo_name()
-            print(name)
+                self._set_tile_color(self.tile,str(self.board_color[options["j"]][options["i"]]))
+            self.tile_selected(new_tile)
         #elif key == 3:
-
 
     ##Private methods
 

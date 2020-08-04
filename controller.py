@@ -21,9 +21,16 @@ class Controller:
 
     def on_key_press(self,event):
         char = event.keysym.upper()
-        key_type = self.model.key_pressed(char,self.view.letters[self.view.turn.get()-1])
-        if key_type:
-            self.view.key_pressed(key_type,char)
+        key_type = self.model.key_pressed(char,self.view.letters[self.view.turn.get()-1],self.view.tile)
+        if key_type == 1:
+            self.view.key_pressed(key_type,char,'')
+            return
+        if key_type[0] == 2 or 3:
+            new_tile = self.view.tile.master.nametowidget(key_type[1])
+            if key_type[0] == 2:
+                self.view.key_pressed(key_type[0],char,new_tile)
+            else:
+                self.view.key_pressed(key_type[0],char,new_tile,i=key_type[2],j=key_type[3])
 
 
 if __name__ == '__main__':
