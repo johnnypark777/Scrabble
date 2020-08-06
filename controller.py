@@ -33,6 +33,9 @@ class Controller:
             new_tile = self.view.main_frm.nametowidget(key_type[1])
         self.view.key_pressed(key,char,new_tile)
 
+    def gen_letters(self):
+
+
 
 
 if __name__ == '__main__':

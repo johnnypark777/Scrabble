@@ -1,7 +1,10 @@
 import string
 import re
 class Model:
+    ## TODO
+    LETTER_FREQ = [9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1]
     LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
+    ##
     PAD = 15
     def __init__(self):
         '''
@@ -32,7 +35,27 @@ class Model:
         key = switcher.get(key)
         return self.move_tile(key,tile)
 
-    def find_ij(self,tile):
+
+    def move_tile(self,key,tile):
+        i = self.move_tile_find_ij(tile)[0]
+        j = self.move_tile_find_ij(tile)[1]
+        if key in (1,4,6):
+            if key == 4:
+                i,j = j,i
+            if i == 0:
+                i += 1
+            if i != self.PAD:
+                i += 1
+        elif key == 2:
+            if i != 8 or j != 8:
+                if i == 0:
+                    i += 1
+                if j == 0:
+                    j += 1
+                return key+1,self.move_tile_gen_name(tile,i,j,key),i-1,j-1
+        return key+1 if key in (3,4,5,6) else key,self.move_tile_gen_name(tile,i,j,key)
+
+    def move_tile_find_ij(self,tile):
         tile_name = tile.winfo_name()
         tile_frame = tile.winfo_parent()
         i = 0
@@ -43,38 +66,20 @@ class Model:
             j = int(re.compile(r'(\d+)$').search(tile_frame).group(1))
         return i,j
 
-    def move_tile(self,key,tile):
+    def move_tile_gen_name(self,tile,i,j,key):
         tile_name = tile.winfo_name()
         name = tile_name.rstrip(string.digits)
         frame_name = tile.winfo_parent().rstrip(string.digits)
-        i = self.find_ij(tile)[0]
-        j = self.find_ij(tile)[1]
-        if key in (1,4,6):
-            if key == 4:
-                i,j = j,i
-            if i == 0:
-                i += 1
-            if i != self.PAD:
-                i += 1
-            if key in (1,6):
-                name += str(i)
-            else:
-                name = frame_name + str(i) +'.' + tile_name
+        if key in (1,6):
+            name += str(i)
         elif key in (2,5):
             if i > 2:
                 name += str(i-1)
-            if key == 2:
-                if i != 8 or j != 8:
-                    if i != 0:
-                        i -= 1
-                    if j != 0:
-                        j -= 1
-                    return key+1,name,i,j
         elif key == 3:
             name = frame_name +'.' + tile_name
             if j > 2:
                name = frame_name + str(j-1) +'.' + tile_name
-        if key in (3,4,5,6):
-            key += 1
-        return key,name
+        elif key == 4:
+            name = frame_name + str(i) +'.' + tile_name
+        return name
     ##Unfinished methods

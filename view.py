@@ -7,21 +7,15 @@ import json
 
 class View(tk.Tk):
     PAD = 15
+    LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
     PLAYER_NUM = 3
     LETTER_NUM = 7
-    LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
-    ## TODO
-    LETTER_FREQ = []
-    ##
     def __init__(self,controller):
         super().__init__()
         self.selected = False
         self.controller = controller
         self.value_var = tk.StringVar()
         self.scores = self.PLAYER_NUM*[tk.IntVar()]
-        ## TODO
-        self.letters = [choices(ascii_uppercase,k=self.LETTER_NUM) for _ in range(self.PLAYER_NUM)]
-        ##
         self.turn = tk.IntVar()
         self.turn.set(1)
         self._load_file()
@@ -29,6 +23,7 @@ class View(tk.Tk):
         self._make_main_frame()
         self._make_labels()
         self._make_buttons()
+        self._make_letters()
         self._make_racks()
 
     def main(self):
@@ -50,7 +45,6 @@ class View(tk.Tk):
         tile.bind("<Key>",self.controller.on_key_press)
 
     def key_pressed(self,key,char,new_tile,**options):
-        print(key)
         if key == 1:
             self.tile.config(
                 bg="beige",fg="black",activeforeground="black",activebackground="beige",text=char
@@ -95,6 +89,8 @@ class View(tk.Tk):
             btn.pack(side='bottom',padx=10)
             return
         else:
+            if txt == '★':
+                self.tile_selected(btn)
             self._set_tile_color(btn,txt)
         btn.pack(side='left')
 
@@ -148,6 +144,9 @@ class View(tk.Tk):
             letter_text.configure(state="disabled")
             letter_text.pack(side='left')
 
+    def _make_letters(self):
+        self.letters = [choices(ascii_uppercase,k=self.LETTER_NUM) for _ in range(self.PLAYER_NUM)]
+        #self.letters.append(self.controller.gen_letters)
     ##Loads the saved file
     def _load_file(self):
         savedData = json.load(open("game_data.json","r"))
