@@ -1,15 +1,17 @@
 import string
+import random
 import re
 class Model:
-    ## TODO
     LETTER_FREQ = [9,2,2,4,12,2,3,2,9,1,1,4,2,6,8,2,1,6,4,6,4,2,2,1,2,1]
     LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
-    ##
+    PLAYER_NUM = 3
+    LETTER_NUM = 7
     PAD = 15
     def __init__(self):
         '''
         '''
         self.scores = list()
+        self.TILE_BAG = self.gen_tile_bag()
 
     def turn_pass(self,curr_player,player_num):
         if curr_player == player_num:
@@ -82,4 +84,22 @@ class Model:
         elif key == 4:
             name = frame_name + str(i) +'.' + tile_name
         return name
+
+    def gen_letters(self):
+        arr = [[] for _ in range(self.PLAYER_NUM)]
+        for i in range(self.PLAYER_NUM):
+            for j in range(self.LETTER_NUM):
+                random.shuffle(self.TILE_BAG)
+                arr[i].append(chr(self.TILE_BAG.pop()+65))
+        return arr
+
+    def gen_tile_bag(self):
+        bag = list()
+        k = 0
+        for i in self.LETTER_FREQ:
+            for j in range(i):
+                bag.append(k)
+            k += 1
+        return bag
     ##Unfinished methods
+

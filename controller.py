@@ -34,9 +34,7 @@ class Controller:
         self.view.key_pressed(key,char,new_tile)
 
     def gen_letters(self):
-
-
-
+        return self.model.gen_letters()
 
 if __name__ == '__main__':
     scrabble = Controller()

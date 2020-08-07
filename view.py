@@ -9,7 +9,6 @@ class View(tk.Tk):
     PAD = 15
     LETTER_SCORE = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10]
     PLAYER_NUM = 3
-    LETTER_NUM = 7
     def __init__(self,controller):
         super().__init__()
         self.selected = False
@@ -18,12 +17,12 @@ class View(tk.Tk):
         self.scores = self.PLAYER_NUM*[tk.IntVar()]
         self.turn = tk.IntVar()
         self.turn.set(1)
+        self.letters = self.controller.gen_letters()
         self._load_file()
         self.title('Scrabble')
         self._make_main_frame()
         self._make_labels()
         self._make_buttons()
-        self._make_letters()
         self._make_racks()
 
     def main(self):
@@ -49,8 +48,11 @@ class View(tk.Tk):
             self.tile.config(
                 bg="beige",fg="black",activeforeground="black",activebackground="beige",text=char
             )
+            self.letters[self.turn.get()-1].remove(char)
+            self.update_racks()
         elif key in (2,3):
-            #Erasing the Letter
+            #Erasing the letters
+            print(self.tile.cget('text'))
             if key == 2:
                 self._set_tile_color(self.tile,'★')
             else:
@@ -144,9 +146,6 @@ class View(tk.Tk):
             letter_text.configure(state="disabled")
             letter_text.pack(side='left')
 
-    def _make_letters(self):
-        self.letters = [choices(ascii_uppercase,k=self.LETTER_NUM) for _ in range(self.PLAYER_NUM)]
-        #self.letters.append(self.controller.gen_letters)
     ##Loads the saved file
     def _load_file(self):
         savedData = json.load(open("game_data.json","r"))
