@@ -34,10 +34,11 @@
 	- Correct Scoring Calculations (TODO List 2.1.1 -> 2.1) (** CURRENT **)
 		1. Convert 'boardLetter' data from 1D to 2D. 
 
-	3rd Refactor (July 7th - Current)
+	Beta (Scrabble 2.0) (July 7th - Current)
 	- Until further bugs found, will focus on this refactor before adding more features.  
 	- Combine all player specific variables (Ex. player1Letters, player2Letters, player1Turn, player2Turn, etc)
 	- Implement MVC model
+		1. Implement word update and erase feature 
 	
 
 
