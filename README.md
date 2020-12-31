@@ -6,3 +6,5 @@ Instructions:
 Linux:
 sudo apt-get install python3-tk
 Open terminal and type "python3 scrabble.py"
+
+"python3 controller.py" is the beta version.
