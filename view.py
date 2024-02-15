@@ -52,10 +52,16 @@ class View(tk.Tk):
         elif key in (2, 3):
             # Erasing the letters
             print(self.tile.cget('text'))
-            if key == 2:
-                self._set_tile_color(self.tile, '★')
-            else:
-                self._set_tile_color(self.tile, str(self.board_color[options["j"]][options["i"]]))
+            removed_char = self.tile.cget('text')
+            if removed_char != '★' and '' and '2L' and '3L' and '3W' and '3L':
+                if key == 2:
+                    self._set_tile_color(self.tile, '★')
+                else:
+                    self._set_tile_color(self.tile, str(self.board_color[options["j"]][options["i"]]))
+                # Add the character back to the rack:
+                self.letters[self.turn.get() - 1].append(removed_char)
+                self.update_racks()
+            
         self.tile_selected(new_tile)
 
     # Private methods
@@ -134,7 +140,6 @@ class View(tk.Tk):
         self.rack_frm.pack(side='bottom', pady=(20, 10))
 
     def _generate_text(self, frm):
-        print("Letter list", self.letters)
         for i in range(len(self.letters[self.turn.get() - 1])):
             letter = self.letters[self.turn.get() - 1][i]
             sub = self.LETTER_SCORE[ord(letter) - 65]

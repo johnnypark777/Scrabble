@@ -38,7 +38,8 @@
 	- Until further bugs found, will focus on this refactor before adding more features.  
 	- Combine all player specific variables (Ex. player1Letters, player2Letters, player1Turn, player2Turn, etc)
 	- Implement MVC model
-		1. Implement word update and erase feature 
+		1. Implement word update
+		2. Implement erase feature - done
 	
 
 
